@@ -1,9 +1,13 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TokenService {
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId);
+
   private accessTokenSignal = signal<string | null>(null);
   private refreshTokenSignal = signal<string | null>(null);
   private roleSignal = signal<'user' | 'admin' | null>(null);
@@ -15,33 +19,42 @@ export class TokenService {
   readonly isAdmin = computed(() => this.roleSignal() === 'admin');
 
   constructor() {
-    // Initialize service state from persistent storage if available
-    const access = localStorage.getItem('access_token');
-    const refresh = localStorage.getItem('refresh_token');
-    const role = localStorage.getItem('user_role') as 'user' | 'admin' | null;
+    if (this.isBrowser) {
+      const access = localStorage.getItem('access_token');
+      const refresh = localStorage.getItem('refresh_token');
+      const role = localStorage.getItem('user_role') as 'user' | 'admin' | null;
 
-    if (access) this.accessTokenSignal.set(access);
-    if (refresh) this.refreshTokenSignal.set(refresh);
-    if (role) this.roleSignal.set(role);
+      if (access) this.accessTokenSignal.set(access);
+      if (refresh) this.refreshTokenSignal.set(refresh);
+      if (role) this.roleSignal.set(role);
+    }
   }
 
   setTokens(accessToken: string, refreshToken?: string, role?: 'user' | 'admin') {
     this.accessTokenSignal.set(accessToken);
-    localStorage.setItem('access_token', accessToken);
+    if (this.isBrowser) {
+      localStorage.setItem('access_token', accessToken);
+    }
 
     if (refreshToken) {
       this.refreshTokenSignal.set(refreshToken);
-      localStorage.setItem('refresh_token', refreshToken);
+      if (this.isBrowser) {
+        localStorage.setItem('refresh_token', refreshToken);
+      }
     }
     if (role) {
       this.roleSignal.set(role);
-      localStorage.setItem('user_role', role);
+      if (this.isBrowser) {
+        localStorage.setItem('user_role', role);
+      }
     }
   }
 
   setAccessToken(token: string) {
     this.accessTokenSignal.set(token);
-    localStorage.setItem('access_token', token);
+    if (this.isBrowser) {
+      localStorage.setItem('access_token', token);
+    }
   }
 
   getAccessToken(): string | null {
@@ -76,8 +89,10 @@ export class TokenService {
     this.accessTokenSignal.set(null);
     this.refreshTokenSignal.set(null);
     this.roleSignal.set(null);
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user_role');
+    if (this.isBrowser) {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user_role');
+    }
   }
 }

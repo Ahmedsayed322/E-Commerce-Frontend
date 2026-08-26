@@ -17,9 +17,12 @@ export class ShopComponent implements OnInit {
   categoryBrandStore = inject(CategoryBrandStore);
   private route = inject(ActivatedRoute);
 
+  constructor() {
+    this.productsStore.syncWithQueryParams(this.route.queryParams);
+  }
+
   ngOnInit() {
     this.categoryBrandStore.init();
     this.productsStore.loadProducts();
-    this.productsStore.syncWithQueryParams(this.route.queryParams);
   }
 }

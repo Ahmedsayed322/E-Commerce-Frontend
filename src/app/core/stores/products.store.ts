@@ -203,7 +203,9 @@ export const ProductsStore = signalStore(
     setPage(page: number) {
       if (page >= 1 && page <= store.totalPages()) {
         patchState(store, { currentPage: page });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (typeof window !== 'undefined') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
       }
     },
     nextPage() {

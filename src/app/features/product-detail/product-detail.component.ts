@@ -1,4 +1,4 @@
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
@@ -20,7 +20,7 @@ import { SeoService } from '../../core/services/seo.service';
   imports: [CommonModule, FormsModule, RouterModule, ProductCardComponent, ImageUrlPipe],
   templateUrl: './product-detail.component.html',
 })
-export class ProductDetailComponent implements OnInit {
+export class ProductDetailComponent {
   productsStore = inject(ProductsStore);
   cartStore = inject(CartStore);
   wishlistStore = inject(WishlistStore);
@@ -42,17 +42,15 @@ export class ProductDetailComponent implements OnInit {
   );
 
   constructor() {
+    this.productsStore.loadProductById(this.productId$);
+    this.reviewStore.loadReviews(this.productId$);
+
     effect(() => {
       const prod = this.productsStore.activeProduct();
       if (prod) {
         this.seoService.setProductSeo(prod);
       }
     });
-  }
-
-  ngOnInit() {
-    this.productsStore.loadProductById(this.productId$);
-    this.reviewStore.loadReviews(this.productId$);
   }
 
   decreaseQty() {
