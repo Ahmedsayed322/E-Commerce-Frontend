@@ -1,0 +1,121 @@
+<div
+  class="h-full w-full group relative flex flex-col bg-white rounded-2xl border border-[#D8D2C7]/60 shadow-soft card-hover hover:border-[#C96F4A] overflow-hidden"
+  [class.opacity-80]="product().stock <= 0"
+>
+  <!-- Image Container (Fixed 1:1 Aspect Ratio) -->
+  <div class="relative aspect-square w-full bg-[#F7F4EE] overflow-hidden cursor-pointer shrink-0">
+    <a [routerLink]="['/product', product()._id]" class="block w-full h-full">
+      <img
+        [src]="product().mainImage | imageUrl"
+        [alt]="product().title"
+        class="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
+        [class.grayscale-50]="product().stock <= 0"
+        loading="lazy"
+      />
+    </a>
+
+    <!-- Discount Badge -->
+    @if (product().discount > 0 && product().stock > 0) {
+      <div class="absolute top-3 left-3 bg-[#C96F4A] text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-md animate-fade-in">
+        -{{ product().discount }}% OFF
+      </div>
+    }
+
+    <!-- Out of Stock Badge -->
+    @if (product().stock <= 0) {
+      <div class="absolute top-3 left-3 bg-[#111111]/90 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">
+        Out of Stock
+      </div>
+    }
+
+    <!-- Wishlist Button -->
+    <button
+      type="button"
+      (click)="toggleWishlist($event)"
+      [class]="isInWishlist() ? 'bg-rose-50 text-rose-500 scale-105' : 'bg-white/80 backdrop-blur-md text-[#888888] hover:text-[#C96F4A] hover:bg-white'"
+      class="absolute top-3 right-3 p-2 rounded-full shadow-sm transition-all duration-300 active:scale-90"
+      title="Save to Wishlist"
+    >
+      <svg class="w-4 h-4 transition-transform duration-300" [class.animate-heart-beat]="isInWishlist()" [attr.fill]="isInWishlist() ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+        />
+      </svg>
+    </button>
+
+    <!-- Stock Status Ribbon -->
+    @if (product().stock > 0 && product().stock <= 5) {
+      <div class="absolute bottom-2 left-2 right-2 bg-amber-600/90 backdrop-blur-sm text-white text-[10px] font-semibold py-1 px-2 rounded-lg text-center shadow-sm">
+        Only {{ product().stock }} remaining
+      </div>
+    } @else if (product().stock <= 0) {
+      <div class="absolute inset-0 bg-black/35 backdrop-blur-[2px] flex items-center justify-center pointer-events-none">
+        <span class="px-3.5 py-1.5 rounded-xl bg-white/95 text-[#111111] font-extrabold text-xs tracking-wider uppercase shadow-lg border border-[#D8D2C7]">
+          Sold Out
+        </span>
+      </div>
+    }
+  </div>
+
+  <!-- Details Container -->
+  <div class="p-4 flex-1 flex flex-col justify-between">
+    <div>
+      <!-- Category / Brand Tag -->
+      <div class="flex items-center justify-between text-[11px] text-[#888888] font-medium mb-1.5 h-4">
+        <span class="truncate pr-2 uppercase tracking-wider text-[10px] text-[#777777]">{{ categoryName() }}</span>
+        @if (product().ratingAverage) {
+          <div class="flex items-center gap-1 text-amber-500 font-semibold shrink-0">
+            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <span>{{ product().ratingAverage }}</span>
+            @if (product().ratingCount) {
+              <span class="text-[#888888] font-normal">({{ product().ratingCount }})</span>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Product Title (Consistent 2-line height) -->
+      <div class="h-10 mb-2 flex items-start">
+        <h4 class="text-xs sm:text-sm font-semibold text-[#111111] line-clamp-2 hover:text-[#C96F4A] transition leading-tight">
+          <a [routerLink]="['/product', product()._id]">{{ product().title }}</a>
+        </h4>
+      </div>
+    </div>
+
+    <!-- Bottom Price & Action -->
+    <div class="pt-3 border-t border-[#D8D2C7]/50 flex items-center justify-between mt-auto shrink-0">
+      <!-- Price Box -->
+      <div class="flex flex-col">
+        <div class="flex items-baseline gap-1.5">
+          <span class="text-sm sm:text-base font-bold text-[#111111]">
+            EGP {{ product().priceAfterDiscount || product().price | number:'1.2-2' }}
+          </span>
+          @if (product().discount > 0) {
+            <span class="text-xs text-[#888888] line-through font-normal">
+              EGP {{ product().price | number:'1.2-2' }}
+            </span>
+          }
+        </div>
+      </div>
+
+      <!-- Add to Cart Button -->
+      <button
+        type="button"
+        (click)="addToCart($event)"
+        [disabled]="product().stock <= 0"
+        class="p-2.5 rounded-xl transition-all duration-300 shadow-sm shrink-0"
+        [ngClass]="product().stock <= 0 ? 'bg-[#D8D2C7]/60 text-[#888888] cursor-not-allowed opacity-60' : 'bg-[#111111] hover:bg-[#C96F4A] active:scale-90 text-white cursor-pointer'"
+        [title]="product().stock <= 0 ? 'Out of Stock' : 'Add to Shopping Bag'"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

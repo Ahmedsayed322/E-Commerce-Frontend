@@ -1,0 +1,204 @@
+@if (cartStore.isCartDrawerOpen()) {
+  <div class="fixed inset-0 z-50 overflow-hidden">
+    <!-- Backdrop -->
+    <div
+      (click)="cartStore.closeDrawer()"
+      class="absolute inset-0 bg-[#111111]/70 backdrop-blur-sm animate-fade-in"
+    ></div>
+
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div class="w-screen max-w-md bg-white shadow-elevated flex flex-col border-l border-[#D8D2C7] animate-slide-right">
+        <!-- Drawer Header -->
+        <div class="p-5 border-b border-[#D8D2C7]/60 flex items-center justify-between bg-[#F7F4EE]/50">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-[#111111] text-white flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+            </div>
+            <h3 class="font-luxury text-lg text-[#111111]">Shopping Bag</h3>
+            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#D8D2C7]/50 text-[#111111]">
+              {{ cartStore.itemCount() }}
+            </span>
+          </div>
+
+          <button
+            (click)="cartStore.closeDrawer()"
+            class="p-2 text-[#888888] hover:text-[#111111] rounded-xl hover:bg-[#F7F4EE] transition"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Free Shipping Bar -->
+        <div class="bg-[#C96F4A]/10 px-5 py-2.5 border-b border-[#C96F4A]/20 flex items-center gap-2 text-[#C96F4A] text-xs font-medium">
+          <svg class="w-4 h-4 text-[#C96F4A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <span>Privilege status: <strong>Complimentary Express Delivery</strong> unlocked</span>
+        </div>
+
+        <!-- Cart Items List -->
+        <div class="flex-1 overflow-y-auto p-5 space-y-4">
+          @if (!cartStore.cart() || cartStore.cart()!.products.length === 0) {
+            <div class="h-full flex flex-col items-center justify-center text-center p-6">
+              <div class="w-16 h-16 rounded-3xl bg-[#F7F4EE] text-[#888888] flex items-center justify-center mb-4 border border-[#D8D2C7]/60">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+              </div>
+              <h4 class="font-luxury text-lg text-[#111111] mb-1">Your bag is empty</h4>
+              <p class="text-xs text-[#777777] max-w-xs mb-6 font-secondary">Explore our curated collections and discover timeless essentials.</p>
+              <button
+                (click)="cartStore.closeDrawer()"
+                [routerLink]="['/shop']"
+                class="px-6 py-2.5 bg-[#111111] hover:bg-[#C96F4A] text-white text-xs font-bold rounded-xl transition shadow-md"
+              >
+                Discover Collection
+              </button>
+            </div>
+          } @else {
+            @for (item of cartStore.cart()!.products; track item.product._id || $index) {
+              <div class="flex items-center gap-3.5 p-3 rounded-2xl border border-[#D8D2C7]/60 bg-white hover:border-[#C96F4A] transition shadow-sm">
+                <!-- Product Image -->
+                <img
+                  [src]="item.product.mainImage | imageUrl"
+                  [alt]="item.product.title || 'Product'"
+                  class="w-16 h-16 rounded-xl object-cover bg-[#F7F4EE] shrink-0 border border-[#D8D2C7]/40"
+                />
+
+                <!-- Info -->
+                <div class="flex-1 min-w-0">
+                  <h5 class="text-xs font-semibold text-[#111111] truncate">
+                    {{ item.product.title || 'Product Item' }}
+                  </h5>
+                  <p class="text-xs font-bold text-[#C96F4A] mt-0.5">
+                    EGP {{ item.finalPrice || item.product.priceAfterDiscount || item.product.price || 0 | number:'1.2-2' }}
+                  </p>
+
+                  <!-- Quantity Stepper -->
+                  <div class="flex items-center gap-2 mt-2">
+                    <div class="flex items-center border border-[#D8D2C7] rounded-lg overflow-hidden bg-[#F7F4EE]">
+                      <button
+                        type="button"
+                        (click)="cartStore.adjustQuantity(item.product._id, item.quantity - 1)"
+                        class="px-2 py-0.5 text-[#111111] hover:bg-[#D8D2C7]/60 transition text-xs font-bold"
+                      >
+                        -
+                      </button>
+                      <span class="px-2.5 text-xs font-bold text-[#111111]">{{ item.quantity }}</span>
+                      <button
+                        type="button"
+                        (click)="cartStore.adjustQuantity(item.product._id, item.quantity + 1)"
+                        class="px-2 py-0.5 text-[#111111] hover:bg-[#D8D2C7]/60 transition text-xs font-bold"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <!-- Remove Button -->
+                    <button
+                      type="button"
+                      (click)="cartStore.removeItem(item.product._id)"
+                      class="text-[#888888] hover:text-rose-600 p-1 text-xs transition ml-auto"
+                      title="Remove item"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Drawer Footer / Summary -->
+        @if (cartStore.cart() && cartStore.cart()!.products.length > 0) {
+          <div class="p-5 border-t border-[#D8D2C7]/60 bg-[#F7F4EE]/50 space-y-4">
+            <!-- Promo Code Input -->
+            <div>
+              @if (cartStore.appliedCoupon()) {
+                <div class="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800">
+                  <div class="flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    <span class="font-bold">{{ cartStore.appliedCoupon()!.code }}</span>
+                    <span>(-{{ cartStore.appliedCoupon()!.amount }}%)</span>
+                  </div>
+                  <button
+                    type="button"
+                    (click)="cartStore.removeCoupon()"
+                    class="text-emerald-800 hover:text-emerald-950 font-bold"
+                  >
+                    ✕
+                  </button>
+                </div>
+              } @else {
+                <div class="flex gap-2">
+                  <input
+                    type="text"
+                    [(ngModel)]="couponCode"
+                    placeholder="Coupon (e.g. OWEL20)"
+                    class="flex-1 px-3 py-2 text-xs uppercase font-bold rounded-xl border border-[#D8D2C7] bg-white focus:outline-none focus:ring-2 focus:ring-[#C96F4A]/20 focus:border-[#C96F4A]"
+                  />
+                  <button
+                    type="button"
+                    (click)="applyCoupon()"
+                    class="px-3.5 py-2 text-xs font-bold bg-[#111111] hover:bg-[#C96F4A] text-white rounded-xl transition"
+                  >
+                    Apply
+                  </button>
+                </div>
+              }
+            </div>
+
+            <!-- Price Calculations -->
+            <div class="space-y-1.5 text-xs">
+              <div class="flex justify-between text-[#777777]">
+                <span>Subtotal</span>
+                <span class="font-bold text-[#111111]">EGP {{ cartStore.subtotal() | number:'1.2-2' }}</span>
+              </div>
+              @if (cartStore.discountAmount() > 0) {
+                <div class="flex justify-between text-emerald-700 font-bold">
+                  <span>Coupon Discount</span>
+                  <span>-EGP {{ cartStore.discountAmount() | number:'1.2-2' }}</span>
+                </div>
+              }
+              <div class="flex justify-between text-[#777777]">
+                <span>Express Delivery</span>
+                <span class="text-emerald-700 font-bold">Free</span>
+              </div>
+              <div class="flex justify-between text-sm font-bold text-[#111111] pt-2 border-t border-[#D8D2C7]">
+                <span>Total</span>
+                <span class="text-[#C96F4A] text-base font-extrabold">EGP {{ cartStore.finalTotal() | number:'1.2-2' }}</span>
+              </div>
+            </div>
+
+            <!-- Checkout Button -->
+            <div class="grid grid-cols-2 gap-2 pt-1">
+              <a
+                (click)="cartStore.closeDrawer()"
+                [routerLink]="['/cart']"
+                class="py-3 px-3 text-center rounded-xl bg-white border border-[#D8D2C7] text-[#111111] hover:bg-[#F7F4EE] text-xs font-bold transition"
+              >
+                View Bag
+              </a>
+              <a
+                (click)="cartStore.closeDrawer()"
+                [routerLink]="['/checkout']"
+                class="py-3 px-3 text-center rounded-xl bg-[#111111] hover:bg-[#C96F4A] text-white text-xs font-bold shadow-md transition"
+              >
+                Proceed to Checkout
+              </a>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

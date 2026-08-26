@@ -1,0 +1,132 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <!-- Profile Header Summary -->
+  <div class="bg-[#111111] text-white rounded-3xl p-6 sm:p-8 shadow-elevated border border-[#222222] flex flex-col sm:flex-row items-center justify-between gap-6">
+    <div class="flex items-center gap-4">
+      @if (authStore.user()?.avatar) {
+        <img [src]="authStore.user()!.avatar" class="w-16 h-16 rounded-2xl object-cover border-2 border-white/20" />
+      } @else {
+        <div class="w-16 h-16 rounded-2xl bg-[#C96F4A] font-extrabold text-xl flex items-center justify-center border-2 border-white/20 text-white">
+          {{ authStore.initials() }}
+        </div>
+      }
+      <div>
+        <h2 class="font-luxury text-2xl text-white">{{ authStore.displayName() }}</h2>
+        <p class="text-xs text-[#D8D2C7] font-secondary">{{ authStore.user()?.email }}</p>
+        <span class="inline-block mt-1.5 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase bg-white/10 text-[#D8D2C7] border border-white/10">
+          OWEL Privilege Client
+        </span>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="flex items-center gap-8 border-t sm:border-t-0 sm:border-l border-[#333333] pt-4 sm:pt-0 sm:pl-8 text-center font-secondary">
+      <div>
+        <span class="block text-2xl font-extrabold text-white">{{ ordersStore.orders().length }}</span>
+        <span class="text-[11px] text-[#D8D2C7]">Orders Placed</span>
+      </div>
+      <div>
+        <span class="block text-2xl font-extrabold text-[#C96F4A]">EGP {{ ordersStore.totalSpent() | number:'1.2-2' }}</span>
+        <span class="text-[11px] text-[#D8D2C7]">Total Value</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders List Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h3 class="font-luxury text-2xl sm:text-3xl text-[#111111]">Order History & Receipts</h3>
+      <p class="text-xs text-[#777777] mt-0.5 font-secondary">Track the real-time concierge delivery and status of your acquisitions</p>
+    </div>
+  </div>
+
+  @if (ordersStore.loading()) {
+    <div class="space-y-4">
+      @for (i of [1,2,3]; track i) {
+        <div class="h-28 bg-[#D8D2C7]/40 rounded-3xl animate-pulse"></div>
+      }
+    </div>
+  } @else if (ordersStore.orders().length === 0) {
+    <div class="bg-white rounded-3xl p-12 text-center border border-[#D8D2C7]/60 shadow-soft max-w-md mx-auto">
+      <div class="w-16 h-16 rounded-full bg-[#F7F4EE] text-[#888888] flex items-center justify-center mx-auto mb-4 border border-[#D8D2C7]/60">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+      </div>
+      <h4 class="font-luxury text-xl font-bold text-[#111111] mb-1">No orders placed yet</h4>
+      <p class="text-xs text-[#777777] mb-6 font-secondary">When you acquire items from our collection, tracking and receipts will appear here.</p>
+      <a
+        routerLink="/shop"
+        class="px-6 py-3 rounded-xl bg-[#111111] hover:bg-[#C96F4A] text-white text-xs font-bold shadow-md transition inline-block"
+      >
+        Discover Collection
+      </a>
+    </div>
+  } @else {
+    <div class="space-y-4">
+      @for (order of ordersStore.orders(); track order._id) {
+        <div class="bg-white rounded-3xl p-6 border border-[#D8D2C7]/60 shadow-soft hover:border-[#C96F4A] transition space-y-4">
+          <!-- Top Row -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#D8D2C7]/40">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-[#F7F4EE] border border-[#D8D2C7] text-[#111111] flex items-center justify-center font-mono font-bold text-xs">
+                #{{ order._id.slice(-6).toUpperCase() }}
+              </div>
+              <div>
+                <h5 class="text-xs font-bold text-[#111111]">Order: {{ order._id }}</h5>
+                <p class="text-[11px] text-[#777777] font-secondary">{{ order.createdAt | date:'mediumDate' }}</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <!-- Status Badge -->
+              <span
+                class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                [ngClass]="{
+                  'bg-amber-50 text-amber-800 border border-amber-200': order.status === 'pending',
+                  'bg-blue-50 text-blue-800 border border-blue-200': order.status === 'shipping',
+                  'bg-emerald-50 text-emerald-800 border border-emerald-200': order.status === 'DELIVERED',
+                  'bg-rose-50 text-rose-800 border border-rose-200': order.status === 'cancelled'
+                }"
+              >
+                {{ order.status }}
+              </span>
+
+              <span class="text-base font-extrabold text-[#111111]">
+                EGP {{ order.totalPrice | number:'1.2-2' }}
+              </span>
+
+              @if (order.paymentMethod === 'card' && order.paymentStatus !== 'paid') {
+                <button
+                  type="button"
+                  (click)="ordersStore.payExistingOrder(order._id)"
+                  class="px-3.5 py-1.5 rounded-xl bg-[#C96F4A] hover:bg-[#b85834] active:scale-95 text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
+                  Pay Now
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Details Row -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-[#555555] font-secondary">
+            <div>
+              <span class="font-bold text-[#111111] block mb-0.5">Shipping Address:</span>
+              <p class="text-[#777777]">{{ order.address }}</p>
+            </div>
+            <div>
+              <span class="font-bold text-[#111111] block mb-0.5">Payment Method:</span>
+              <p class="uppercase font-semibold text-[#111111]">{{ order.paymentMethod }} ({{ order.paymentStatus }})</p>
+            </div>
+            <div>
+              <span class="font-bold text-[#111111] block mb-0.5">Contact Phone:</span>
+              <p class="text-[#777777]">{{ order.phone }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

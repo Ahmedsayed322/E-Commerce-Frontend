@@ -1,0 +1,159 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <div>
+    <h1 class="font-luxury text-3xl sm:text-4xl text-[#111111] tracking-tight">Shopping Bag</h1>
+    <p class="text-xs sm:text-sm text-[#777777] mt-1 font-secondary">Review your selected pieces, apply member privileges, and proceed to secure checkout</p>
+  </div>
+
+  @if (!cartStore.cart() || cartStore.cart()!.products.length === 0) {
+    <div class="bg-white rounded-3xl p-12 text-center border border-[#D8D2C7]/60 shadow-soft max-w-md mx-auto">
+      <div class="w-16 h-16 rounded-full bg-[#F7F4EE] text-[#888888] flex items-center justify-center mx-auto mb-4 border border-[#D8D2C7]/60">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+      </div>
+      <h3 class="font-luxury text-xl font-bold text-[#111111] mb-1">Your shopping bag is empty</h3>
+      <p class="text-xs text-[#777777] mb-6 font-secondary">Explore our latest arrivals and timeless luxury items.</p>
+      <a
+        routerLink="/shop"
+        class="px-6 py-3 rounded-xl bg-[#111111] hover:bg-[#C96F4A] text-white text-xs font-bold shadow-md transition inline-block"
+      >
+        Explore Collection
+      </a>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Items Table -->
+      <div class="lg:col-span-2 space-y-4">
+        <div class="bg-white rounded-3xl p-6 border border-[#D8D2C7]/60 shadow-soft divide-y divide-[#D8D2C7]/40">
+          @for (item of cartStore.cart()!.products; track item.product?._id || $index) {
+            <div class="py-5 first:pt-0 last:pb-0 flex items-center gap-4">
+              <img
+                [src]="item.product.mainImage | imageUrl"
+                [alt]="item.product.title || 'Product'"
+                class="w-20 h-20 rounded-2xl object-cover bg-[#F7F4EE] border border-[#D8D2C7]/60 shrink-0"
+              />
+
+              <div class="flex-1 min-w-0">
+                <h4 class="text-sm font-semibold text-[#111111] truncate">
+                  <a [routerLink]="['/product', item.product._id]" class="hover:text-[#C96F4A] transition">
+                    {{ item.product.title || 'Product Item' }}
+                  </a>
+                </h4>
+                <p class="text-xs font-bold text-[#C96F4A] mt-1">
+                  EGP {{ item.finalPrice || item.product.priceAfterDiscount || item.product.price || 0 | number:'1.2-2' }}
+                </p>
+              </div>
+
+              <!-- Quantity Adjuster -->
+              <div class="flex items-center border border-[#D8D2C7] rounded-xl overflow-hidden bg-[#F7F4EE]">
+                <button
+                  type="button"
+                  (click)="cartStore.adjustQuantity(item.product._id, item.quantity - 1)"
+                  class="px-3 py-1 text-[#111111] hover:bg-[#D8D2C7]/60 transition font-bold text-xs"
+                >
+                  -
+                </button>
+                <span class="px-3 text-xs font-bold text-[#111111]">{{ item.quantity }}</span>
+                <button
+                  type="button"
+                  (click)="cartStore.adjustQuantity(item.product._id, item.quantity + 1)"
+                  class="px-3 py-1 text-[#111111] hover:bg-[#D8D2C7]/60 transition font-bold text-xs"
+                >
+                  +
+                </button>
+              </div>
+
+              <!-- Subtotal -->
+              <div class="text-right w-28 shrink-0">
+                <span class="text-sm font-bold text-[#111111]">
+                  EGP {{ (item.finalPrice || item.product.priceAfterDiscount || item.product.price || 0) * item.quantity | number:'1.2-2' }}
+                </span>
+              </div>
+
+              <!-- Remove Button -->
+              <button
+                type="button"
+                (click)="cartStore.removeItem(item.product._id)"
+                class="p-2 text-[#888888] hover:text-rose-600 rounded-xl hover:bg-rose-50 transition"
+                title="Remove item"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Order Summary Card -->
+      <div class="space-y-6">
+        <div class="bg-white rounded-3xl p-6 border border-[#D8D2C7]/60 shadow-soft space-y-6">
+          <h3 class="font-luxury text-xl text-[#111111]">Order Summary</h3>
+
+          <!-- Coupon Code -->
+          <div>
+            @if (cartStore.appliedCoupon()) {
+              <div class="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold uppercase tracking-wider">{{ cartStore.appliedCoupon()!.code }}</span>
+                  <span>(-{{ cartStore.appliedCoupon()!.amount }}%)</span>
+                </div>
+                <button (click)="cartStore.removeCoupon()" class="font-bold hover:text-emerald-950">Remove</button>
+              </div>
+            } @else {
+              <div class="flex gap-2">
+                <input
+                  type="text"
+                  [(ngModel)]="couponCode"
+                  placeholder="Coupon (e.g. OWEL20)"
+                  class="flex-1 px-3.5 py-2 text-xs uppercase font-bold rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40 text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#C96F4A]/20 focus:border-[#C96F4A]"
+                />
+                <button
+                  type="button"
+                  (click)="applyCoupon()"
+                  class="px-4 py-2 bg-[#111111] hover:bg-[#C96F4A] text-white text-xs font-bold rounded-xl transition"
+                >
+                  Apply
+                </button>
+              </div>
+            }
+          </div>
+
+          <!-- Price Breakdown -->
+          <div class="space-y-2.5 text-xs font-secondary">
+            <div class="flex justify-between text-[#777777]">
+              <span>Subtotal</span>
+              <span class="font-bold text-[#111111]">EGP {{ cartStore.subtotal() | number:'1.2-2' }}</span>
+            </div>
+            @if (cartStore.discountAmount() > 0) {
+              <div class="flex justify-between text-emerald-700 font-bold">
+                <span>Coupon Discount ({{ cartStore.appliedCoupon()?.code }})</span>
+                <span>-EGP {{ cartStore.discountAmount() | number:'1.2-2' }}</span>
+              </div>
+            }
+            <div class="flex justify-between text-[#777777]">
+              <span>Express Delivery</span>
+              <span class="text-emerald-700 font-bold">Complimentary</span>
+            </div>
+            <div class="flex justify-between text-base font-extrabold text-[#111111] pt-3 border-t border-[#D8D2C7]">
+              <span>Total</span>
+              <span class="text-[#C96F4A] text-lg">EGP {{ cartStore.finalTotal() | number:'1.2-2' }}</span>
+            </div>
+          </div>
+
+          <!-- Checkout CTA -->
+          <a
+            routerLink="/checkout"
+            class="w-full py-4 px-6 rounded-xl bg-[#111111] hover:bg-[#C96F4A] active:scale-95 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2"
+          >
+            Proceed to Checkout
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  }
+</div>

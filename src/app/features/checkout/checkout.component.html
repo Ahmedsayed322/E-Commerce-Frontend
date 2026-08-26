@@ -1,0 +1,182 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <div>
+    <h1 class="font-luxury text-3xl sm:text-4xl text-[#111111] tracking-tight">Checkout & Shipping</h1>
+    <p class="text-xs sm:text-sm text-[#777777] mt-1 font-secondary">Provide your delivery details and choose your preferred secure payment method</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Shipping & Payment Details -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Step 1: Delivery Address -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-[#D8D2C7]/60 shadow-soft space-y-4">
+        <div class="flex items-center gap-2.5 border-b border-[#D8D2C7]/40 pb-4">
+          <span class="w-6 h-6 rounded-full bg-[#111111] text-white text-xs font-bold flex items-center justify-center">1</span>
+          <h3 class="font-luxury text-lg text-[#111111]">Delivery & Contact Information</h3>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div>
+            <label class="block text-xs font-bold text-[#111111] mb-1">Full Name</label>
+            <input
+              type="text"
+              [value]="authStore.displayName()"
+              disabled
+              class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-[#D8D2C7] bg-[#F7F4EE] text-[#555555] font-semibold"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-[#111111] mb-1">Email Address</label>
+            <input
+              type="email"
+              [value]="authStore.user()?.email"
+              disabled
+              class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-[#D8D2C7] bg-[#F7F4EE] text-[#555555] font-semibold"
+            />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-[#111111] mb-1">
+              Contact Phone <span class="text-[#C96F4A]">*</span>
+            </label>
+            <input
+              type="tel"
+              [ngModel]="phone()"
+              (ngModelChange)="phone.set($event)"
+              placeholder="e.g. 01012345678 or +201012345678"
+              class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40 text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#C96F4A]/20 focus:border-[#C96F4A] transition"
+            />
+            <span class="text-[10px] text-[#888888] mt-1 block">Recipient contact number</span>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-[#111111] mb-1">
+              Full Street Delivery Address <span class="text-[#C96F4A]">*</span>
+            </label>
+            <textarea
+              rows="3"
+              [ngModel]="streetAddress()"
+              (ngModelChange)="streetAddress.set($event)"
+              placeholder="Villa / Apartment, Building, Street, District, City..."
+              class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40 text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#C96F4A]/20 focus:border-[#C96F4A] transition resize-none"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Payment Method Selection -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-[#D8D2C7]/60 shadow-soft space-y-4">
+        <div class="flex items-center gap-2.5 border-b border-[#D8D2C7]/40 pb-4">
+          <span class="w-6 h-6 rounded-full bg-[#111111] text-white text-xs font-bold flex items-center justify-center">2</span>
+          <h3 class="font-luxury text-lg text-[#111111]">Payment Option</h3>
+        </div>
+
+        <div class="space-y-3 pt-2">
+          <!-- Cash On Delivery -->
+          <label
+            (click)="paymentMethod.set('cash')"
+            [class.border-[#C96F4A]]="paymentMethod() === 'cash'"
+            [class.bg-[#C96F4A]/5]="paymentMethod() === 'cash'"
+            class="flex items-start gap-3 p-4 rounded-2xl border border-[#D8D2C7] cursor-pointer hover:border-[#C96F4A] transition"
+          >
+            <input
+              type="radio"
+              name="paymentMethod"
+              [checked]="paymentMethod() === 'cash'"
+              class="mt-1 text-[#C96F4A] focus:ring-[#C96F4A]"
+            />
+            <div>
+              <h4 class="text-xs font-bold text-[#111111]">Cash on Delivery (COD)</h4>
+              <p class="text-[11px] text-[#777777] mt-0.5 font-secondary">Pay upon arrival when your concierge parcel reaches your address.</p>
+            </div>
+          </label>
+
+          <!-- Card Payment (Paymob) -->
+          <label
+            (click)="paymentMethod.set('card')"
+            [class.border-[#C96F4A]]="paymentMethod() === 'card'"
+            [class.bg-[#C96F4A]/5]="paymentMethod() === 'card'"
+            class="flex items-start gap-3 p-4 rounded-2xl border border-[#D8D2C7] cursor-pointer hover:border-[#C96F4A] transition"
+          >
+            <input
+              type="radio"
+              name="paymentMethod"
+              [checked]="paymentMethod() === 'card'"
+              class="mt-1 text-[#C96F4A] focus:ring-[#C96F4A]"
+            />
+            <div>
+              <h4 class="text-xs font-bold text-[#111111]">Credit / Debit Card (Paymob Gateway)</h4>
+              <p class="text-[11px] text-[#777777] mt-0.5 font-secondary">Instant & 3D secure encrypted online payment processing.</p>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Summary Column -->
+    <div>
+      <div class="bg-white rounded-3xl p-6 border border-[#D8D2C7]/60 shadow-soft space-y-6 sticky top-24">
+        <h3 class="font-luxury text-xl text-[#111111]">Bespoke Order</h3>
+
+        <!-- Item List Preview -->
+        <div class="max-h-60 overflow-y-auto space-y-3 pr-1">
+          @for (item of cartStore.cart()?.products; track item.product._id || $index) {
+            <div class="flex items-center gap-3 text-xs">
+              <img
+                [src]="item.product.mainImage | imageUrl"
+                class="w-11 h-11 rounded-xl object-cover bg-[#F7F4EE] border border-[#D8D2C7]/50 shrink-0"
+              />
+              <div class="flex-1 min-w-0">
+                <p class="font-semibold text-[#111111] truncate">{{ item.product.title || 'Product' }}</p>
+                <p class="text-[#777777] text-[11px]">Qty: {{ item.quantity }}</p>
+              </div>
+              <span class="font-bold text-[#111111]">
+                EGP {{ (item.finalPrice || item.product.priceAfterDiscount || item.product.price || 0) * item.quantity | number:'1.2-2' }}
+              </span>
+            </div>
+          }
+        </div>
+
+        <!-- Price Breakdown -->
+        <div class="space-y-2 text-xs pt-4 border-t border-[#D8D2C7]/60 font-secondary">
+          <div class="flex justify-between text-[#777777]">
+            <span>Subtotal</span>
+            <span class="font-bold text-[#111111]">EGP {{ cartStore.subtotal() | number:'1.2-2' }}</span>
+          </div>
+          @if (cartStore.discountAmount() > 0) {
+            <div class="flex justify-between text-emerald-700 font-bold">
+              <span>Coupon Discount</span>
+              <span>-EGP {{ cartStore.discountAmount() | number:'1.2-2' }}</span>
+            </div>
+          }
+          <div class="flex justify-between text-[#777777]">
+            <span>Express Delivery</span>
+            <span class="text-emerald-700 font-bold">Complimentary</span>
+          </div>
+          <div class="flex justify-between text-base font-extrabold text-[#111111] pt-3 border-t border-[#D8D2C7]">
+            <span>Grand Total</span>
+            <span class="text-[#C96F4A] text-lg font-extrabold">EGP {{ cartStore.finalTotal() | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <!-- Place Order Button -->
+        <button
+          type="button"
+          (click)="handlePlaceOrder()"
+          [disabled]="ordersStore.submitting() || !cartStore.cart() || cartStore.cart()!.products.length === 0"
+          class="w-full py-4 px-6 rounded-xl bg-[#111111] hover:bg-[#C96F4A] active:scale-95 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 disabled:opacity-50"
+        >
+          @if (ordersStore.submitting()) {
+            <svg class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            Processing Order...
+          } @else {
+            <span>Confirm & Place Order (EGP {{ cartStore.finalTotal() | number:'1.2-2' }})</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

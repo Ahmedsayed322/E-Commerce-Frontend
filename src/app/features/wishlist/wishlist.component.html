@@ -1,0 +1,36 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <div>
+    <h1 class="font-luxury text-3xl sm:text-4xl text-[#111111] tracking-tight">Saved Wishlist</h1>
+    <p class="text-xs sm:text-sm text-[#777777] mt-1 font-secondary">Keep track of the bespoke items you admire and intend to acquire</p>
+  </div>
+
+  @if (wishlistStore.loading()) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="animate-pulse bg-[#D8D2C7]/40 rounded-2xl aspect-[3/4]"></div>
+      }
+    </div>
+  } @else if (wishlistStore.isEmpty()) {
+    <div class="bg-white rounded-3xl p-12 text-center border border-[#D8D2C7]/60 shadow-soft max-w-lg mx-auto">
+      <div class="w-16 h-16 rounded-full bg-[#F7F4EE] text-[#888888] flex items-center justify-center mx-auto mb-4 border border-[#D8D2C7]/60">
+        <svg class="w-8 h-8 text-[#C96F4A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      </div>
+      <h3 class="font-luxury text-xl font-bold text-[#111111] mb-1">Your wishlist is empty</h3>
+      <p class="text-xs text-[#777777] mb-6 font-secondary">Explore our catalog and bookmark items with the heart icon to view them later.</p>
+      <a
+        routerLink="/shop"
+        class="px-6 py-3 rounded-xl bg-[#111111] hover:bg-[#C96F4A] text-white text-xs font-bold shadow-md transition inline-block"
+      >
+        Discover Products
+      </a>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+      @for (product of wishlistStore.products(); track product._id) {
+        <app-product-card [product]="product" />
+      }
+    </div>
+  }
+</div>

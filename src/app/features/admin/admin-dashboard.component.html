@@ -1,0 +1,950 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <!-- Admin Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#111111] text-[#D8D2C7] text-xs font-bold uppercase tracking-wider mb-2">
+        <span class="w-2 h-2 rounded-full bg-[#C96F4A] animate-pulse"></span>
+        OWEL Admin Center
+      </div>
+      <h1 class="font-luxury text-3xl sm:text-4xl text-[#111111] tracking-tight">Catalog & Store Management</h1>
+      <p class="text-xs sm:text-sm text-[#777777] mt-1 font-secondary">Full control over products, customer orders, categories, official brands, and privilege promo coupons</p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      @if (activeTab() === 'products') {
+        <button
+          type="button"
+          (click)="openCreateProductModal()"
+          class="px-5 py-2.5 rounded-2xl bg-[#111111] hover:bg-[#C96F4A] active:scale-95 text-white text-xs font-bold shadow-md transition flex items-center gap-2"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Add Product
+        </button>
+      } @else if (activeTab() === 'categories') {
+        <button
+          type="button"
+          (click)="openCreateCategoryModal()"
+          class="px-5 py-2.5 rounded-2xl bg-[#111111] hover:bg-[#C96F4A] active:scale-95 text-white text-xs font-bold shadow-md transition flex items-center gap-2"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Add Category
+        </button>
+      } @else if (activeTab() === 'brands') {
+        <button
+          type="button"
+          (click)="openCreateBrandModal()"
+          class="px-5 py-2.5 rounded-2xl bg-[#111111] hover:bg-[#C96F4A] active:scale-95 text-white text-xs font-bold shadow-md transition flex items-center gap-2"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Add Brand
+        </button>
+      } @else if (activeTab() === 'coupons') {
+        <button
+          type="button"
+          (click)="isCreateCouponModalOpen.set(true)"
+          class="px-5 py-2.5 rounded-2xl bg-[#111111] hover:bg-[#C96F4A] active:scale-95 text-white text-xs font-bold shadow-md transition flex items-center gap-2"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Create Coupon
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Stats Overview Metrics -->
+  <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 font-secondary">
+    <div class="bg-white p-5 rounded-3xl border border-[#D8D2C7]/60 shadow-soft">
+      <span class="text-xs font-bold text-[#777777] uppercase tracking-wider">Total Revenue</span>
+      <p class="text-xl sm:text-2xl font-extrabold text-emerald-700 mt-1">EGP {{ totalRevenue() | number:'1.2-2' }}</p>
+      <span class="text-[11px] text-[#888888] font-medium mt-1 block">{{ ordersStore.orders().length }} total orders</span>
+    </div>
+
+    <div class="bg-white p-5 rounded-3xl border border-[#D8D2C7]/60 shadow-soft">
+      <span class="text-xs font-bold text-[#777777] uppercase tracking-wider">Products</span>
+      <p class="text-xl sm:text-2xl font-extrabold text-[#111111] mt-1">{{ productsStore.products().length }}</p>
+      <span class="text-[11px] text-[#C96F4A] font-bold mt-1 block">Catalog active</span>
+    </div>
+
+    <div class="bg-white p-5 rounded-3xl border border-[#D8D2C7]/60 shadow-soft">
+      <span class="text-xs font-bold text-[#777777] uppercase tracking-wider">Categories</span>
+      <p class="text-xl sm:text-2xl font-extrabold text-[#111111] mt-1">{{ categoryBrandStore.categories().length }}</p>
+      <span class="text-[11px] text-[#888888] mt-1 block">Departments</span>
+    </div>
+
+    <div class="bg-white p-5 rounded-3xl border border-[#D8D2C7]/60 shadow-soft">
+      <span class="text-xs font-bold text-[#777777] uppercase tracking-wider">Brands</span>
+      <p class="text-xl sm:text-2xl font-extrabold text-[#111111] mt-1">{{ categoryBrandStore.brands().length }}</p>
+      <span class="text-[11px] text-[#888888] mt-1 block">Official houses</span>
+    </div>
+
+    <div class="bg-white p-5 rounded-3xl border border-[#D8D2C7]/60 shadow-soft">
+      <span class="text-xs font-bold text-[#777777] uppercase tracking-wider">Discount Coupons</span>
+      <p class="text-xl sm:text-2xl font-extrabold text-[#C96F4A] mt-1">{{ coupons().length }}</p>
+      <span class="text-[11px] text-[#888888] mt-1 block">Active campaigns</span>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="flex items-center gap-2 border-b border-[#D8D2C7] pb-2 overflow-x-auto">
+    <button
+      type="button"
+      (click)="activeTab.set('products')"
+      [class]="activeTab() === 'products' ? 'bg-[#111111] text-white font-bold' : 'text-[#111111] hover:bg-[#F7F4EE] font-semibold'"
+      class="px-4 py-2 text-xs rounded-xl transition shrink-0"
+    >
+      Products ({{ productsStore.products().length }})
+    </button>
+    <button
+      type="button"
+      (click)="activeTab.set('orders')"
+      [class]="activeTab() === 'orders' ? 'bg-[#111111] text-white font-bold' : 'text-[#111111] hover:bg-[#F7F4EE] font-semibold'"
+      class="px-4 py-2 text-xs rounded-xl transition shrink-0"
+    >
+      Orders ({{ ordersStore.orders().length }})
+    </button>
+    <button
+      type="button"
+      (click)="activeTab.set('categories')"
+      [class]="activeTab() === 'categories' ? 'bg-[#111111] text-white font-bold' : 'text-[#111111] hover:bg-[#F7F4EE] font-semibold'"
+      class="px-4 py-2 text-xs rounded-xl transition shrink-0"
+    >
+      Categories ({{ categoryBrandStore.categories().length }})
+    </button>
+    <button
+      type="button"
+      (click)="activeTab.set('brands')"
+      [class]="activeTab() === 'brands' ? 'bg-[#111111] text-white font-bold' : 'text-[#111111] hover:bg-[#F7F4EE] font-semibold'"
+      class="px-4 py-2 text-xs rounded-xl transition shrink-0"
+    >
+      Brands ({{ categoryBrandStore.brands().length }})
+    </button>
+    <button
+      type="button"
+      (click)="activeTab.set('coupons')"
+      [class]="activeTab() === 'coupons' ? 'bg-[#111111] text-white font-bold' : 'text-[#111111] hover:bg-[#F7F4EE] font-semibold'"
+      class="px-4 py-2 text-xs rounded-xl transition shrink-0"
+    >
+      Coupons ({{ coupons().length }})
+    </button>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB 1: PRODUCTS TABLE                      -->
+  <!-- ========================================== -->
+  @if (activeTab() === 'products') {
+    <div class="bg-white rounded-3xl border border-[#D8D2C7]/60 shadow-soft overflow-hidden">
+      <div class="p-5 border-b border-[#D8D2C7]/40 flex items-center justify-between">
+        <h3 class="font-luxury text-lg text-[#111111]">Product Catalog ({{ productsStore.products().length }})</h3>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-[#555555]">
+          <thead class="bg-[#F7F4EE] text-[#111111] font-bold uppercase tracking-wider text-[10px]">
+            <tr>
+              <th class="p-4">Product</th>
+              <th class="p-4">Price</th>
+              <th class="p-4">Discount</th>
+              <th class="p-4">Stock</th>
+              <th class="p-4">Rating</th>
+              <th class="p-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#D8D2C7]/40">
+            @for (prod of productsStore.products(); track prod._id) {
+              <tr class="hover:bg-[#F7F4EE]/50 transition">
+                <td class="p-4">
+                  <div class="flex items-center gap-3">
+                    <img [src]="prod.mainImage | imageUrl" [alt]="prod.title" class="w-12 h-12 rounded-xl object-cover bg-[#F7F4EE] shrink-0 border border-[#D8D2C7]/50" />
+                    <div class="min-w-0">
+                      <h4 class="font-bold text-[#111111] truncate max-w-xs">{{ prod.title }}</h4>
+                      <span class="text-[11px] text-[#888888] font-mono">ID: {{ prod._id.slice(-6) }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="p-4 font-bold text-[#111111]">EGP {{ prod.price | number:'1.2-2' }}</td>
+                <td class="p-4">
+                  @if (prod.discount > 0) {
+                    <span class="px-2 py-0.5 rounded-full bg-[#C96F4A]/10 text-[#C96F4A] font-bold text-[10px]">
+                      {{ prod.discount }}% OFF
+                    </span>
+                  } @else {
+                    <span class="text-[#888888] font-normal">None</span>
+                  }
+                </td>
+                <td class="p-4">
+                  <span
+                    class="px-2 py-0.5 rounded-full font-bold text-[10px]"
+                    [ngClass]="prod.stock > 10 ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-800'"
+                  >
+                    {{ prod.stock }} Units
+                  </span>
+                </td>
+                <td class="p-4 font-semibold text-amber-600">★ {{ prod.ratingAverage || 0 }}</td>
+                <td class="p-4 text-right">
+                  <div class="flex items-center justify-end gap-1">
+                    <button
+                      type="button"
+                      (click)="openEditProductModal(prod)"
+                      class="p-1.5 rounded-lg text-[#888888] hover:text-[#C96F4A] hover:bg-[#F7F4EE] transition"
+                      title="Edit product"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      (click)="deleteProduct(prod._id)"
+                      class="p-1.5 rounded-lg text-[#888888] hover:text-rose-600 hover:bg-rose-50 transition"
+                      title="Delete product"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- TAB 2: ORDERS MANAGEMENT                   -->
+  <!-- ========================================== -->
+  @if (activeTab() === 'orders') {
+    <div class="bg-white rounded-3xl border border-[#D8D2C7]/60 shadow-soft overflow-hidden">
+      <div class="p-5 border-b border-[#D8D2C7]/40 flex items-center justify-between">
+        <h3 class="font-luxury text-lg text-[#111111]">All Client Orders ({{ ordersStore.orders().length }})</h3>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-[#555555]">
+          <thead class="bg-[#F7F4EE] text-[#111111] font-bold uppercase tracking-wider text-[10px]">
+            <tr>
+              <th class="p-4">Order ID</th>
+              <th class="p-4">Date</th>
+              <th class="p-4">Client Phone</th>
+              <th class="p-4">Total</th>
+              <th class="p-4">Payment</th>
+              <th class="p-4">Status</th>
+              <th class="p-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#D8D2C7]/40">
+            @for (ord of ordersStore.orders(); track ord._id) {
+              <tr
+                (click)="openOrderDetails(ord)"
+                class="hover:bg-[#F7F4EE]/70 transition cursor-pointer group"
+              >
+                <td class="p-4 font-mono font-bold text-[#111111] group-hover:text-[#C96F4A]">
+                  #{{ ord._id.slice(-6).toUpperCase() }}
+                </td>
+                <td class="p-4">{{ ord.createdAt | date:'shortDate' }}</td>
+                <td class="p-4">{{ ord.phone }}</td>
+                <td class="p-4 font-bold text-[#111111]">EGP {{ ord.totalPrice | number:'1.2-2' }}</td>
+                <td class="p-4 uppercase font-semibold text-[10px]">{{ ord.paymentMethod }} ({{ ord.paymentStatus }})</td>
+                <td class="p-4" (click)="$event.stopPropagation()">
+                  <select
+                    [ngModel]="ord.status"
+                    (ngModelChange)="handleUpdateOrderStatus(ord._id, $event)"
+                    class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C96F4A]/30 transition"
+                    [ngClass]="{
+                      'bg-amber-50 text-amber-900 border-amber-300': ord.status === 'pending',
+                      'bg-blue-50 text-blue-900 border-blue-300': ord.status === 'shipping',
+                      'bg-emerald-50 text-emerald-900 border-emerald-300': ord.status === 'DELIVERED',
+                      'bg-rose-50 text-rose-900 border-rose-300': ord.status === 'cancelled'
+                    }"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="shipping">Shipping</option>
+                    <option value="DELIVERED">Delivered</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </td>
+                <td class="p-4 text-right">
+                  <div class="flex items-center justify-end gap-1.5" (click)="$event.stopPropagation()">
+                    <!-- View Details Button -->
+                    <button
+                      type="button"
+                      (click)="openOrderDetails(ord)"
+                      class="p-1.5 rounded-lg text-[#111111] hover:text-[#C96F4A] hover:bg-white border border-transparent hover:border-[#D8D2C7] transition"
+                      title="View Full Order Details"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </button>
+
+                    @if (ord.paymentStatus === 'paid') {
+                      <button
+                        type="button"
+                        (click)="refundOrder(ord._id)"
+                        class="px-2.5 py-1 text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-600 hover:text-white transition"
+                      >
+                        Refund
+                      </button>
+                    }
+                    <button
+                      type="button"
+                      (click)="deleteOrder(ord._id)"
+                      class="p-1.5 rounded-lg text-[#888888] hover:text-rose-600 hover:bg-rose-50 transition"
+                      title="Delete order"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- TAB 3: CATEGORIES MANAGEMENT               -->
+  <!-- ========================================== -->
+  @if (activeTab() === 'categories') {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (cat of categoryBrandStore.categories(); track cat._id) {
+        <div class="bg-white rounded-3xl p-5 border border-[#D8D2C7]/60 shadow-soft hover:shadow-card transition flex flex-col justify-between space-y-4">
+          <div class="flex items-start gap-4">
+            <img [src]="cat.image | imageUrl" [alt]="cat.name" class="w-16 h-16 rounded-2xl object-cover bg-[#F7F4EE] border border-[#D8D2C7]/60 shrink-0" />
+            <div class="flex-1 min-w-0">
+              <h4 class="font-bold text-sm text-[#111111] truncate">{{ cat.name }}</h4>
+              <span class="text-[11px] font-mono text-[#888888] block mt-0.5">/{{ cat.slug }}</span>
+              <span class="inline-block mt-2 px-2.5 py-0.5 rounded-full bg-[#F7F4EE] text-[#555555] font-bold text-[10px] border border-[#D8D2C7]/50">
+                {{ cat.brands?.length || 0 }} Linked Brands
+              </span>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-[#D8D2C7]/40 flex items-center justify-between">
+            <span class="text-[11px] text-[#888888] font-mono">ID: {{ cat._id.slice(-6) }}</span>
+            <div class="flex items-center gap-1">
+              <button
+                type="button"
+                (click)="openEditCategoryModal(cat)"
+                class="p-1.5 rounded-lg text-[#888888] hover:text-[#C96F4A] hover:bg-[#F7F4EE] transition"
+                title="Edit category"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                (click)="deleteCategory(cat._id)"
+                class="p-1.5 rounded-lg text-[#888888] hover:text-rose-600 hover:bg-rose-50 transition"
+                title="Delete category"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- TAB 4: BRANDS MANAGEMENT                   -->
+  <!-- ========================================== -->
+  @if (activeTab() === 'brands') {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      @for (brand of categoryBrandStore.brands(); track brand._id) {
+        <div class="bg-white rounded-3xl p-5 border border-[#D8D2C7]/60 shadow-soft hover:shadow-card transition flex flex-col justify-between space-y-4">
+          <div class="flex items-center gap-3.5">
+            <img [src]="brand.logo | imageUrl" [alt]="brand.name" class="w-12 h-12 rounded-full object-cover bg-[#F7F4EE] border border-[#D8D2C7]/60 shrink-0" />
+            <div class="flex-1 min-w-0">
+              <h4 class="font-bold text-sm text-[#111111] truncate">{{ brand.name }}</h4>
+              <span class="text-[11px] font-mono text-[#888888] block truncate">/{{ brand.slug }}</span>
+            </div>
+          </div>
+
+          @if (brand.description) {
+            <p class="text-xs text-[#777777] line-clamp-2">{{ brand.description }}</p>
+          }
+
+          <div class="pt-3 border-t border-[#D8D2C7]/40 flex items-center justify-between">
+            <span class="text-[11px] text-[#C96F4A] font-bold">Authorized House</span>
+            <div class="flex items-center gap-1">
+              <button
+                type="button"
+                (click)="openEditBrandModal(brand)"
+                class="p-1.5 rounded-lg text-[#888888] hover:text-[#C96F4A] hover:bg-[#F7F4EE] transition"
+                title="Edit brand"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                (click)="deleteBrand(brand._id)"
+                class="p-1.5 rounded-lg text-[#888888] hover:text-rose-600 hover:bg-rose-50 transition"
+                title="Delete brand"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- TAB 5: COUPONS TABLE                       -->
+  <!-- ========================================== -->
+  @if (activeTab() === 'coupons') {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      @for (c of coupons(); track c._id) {
+        <div class="bg-white p-5 rounded-3xl border border-[#D8D2C7]/60 shadow-soft space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="px-3 py-1 rounded-xl bg-[#C96F4A]/10 text-[#C96F4A] font-mono font-bold text-xs">
+              {{ c.code }}
+            </span>
+            <button (click)="deleteCoupon(c._id)" class="text-[#888888] hover:text-rose-600 p-1 text-xs" title="Delete Coupon">✕</button>
+          </div>
+          <p class="text-2xl font-extrabold text-[#111111]">{{ c.amount }}% OFF</p>
+          <p class="text-[11px] text-[#777777]">Valid until: {{ c.endDate | date:'mediumDate' }}</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- MODAL: CREATE / EDIT PRODUCT               -->
+  <!-- ========================================== -->
+  @if (isCreateProductModalOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div (click)="isCreateProductModalOpen.set(false)" class="absolute inset-0 bg-[#111111]/70 backdrop-blur-sm"></div>
+
+      <div class="relative w-full max-w-lg bg-white rounded-3xl shadow-elevated p-6 z-10 space-y-4 max-h-[90vh] overflow-y-auto border border-[#D8D2C7]">
+        <div class="flex items-center justify-between pb-3 border-b border-[#D8D2C7]/60">
+          <h3 class="font-luxury text-xl text-[#111111]">{{ editingProductId() ? 'Edit Product Details' : 'Create New Catalog Product' }}</h3>
+          <button (click)="isCreateProductModalOpen.set(false)" class="text-[#888888] hover:text-[#111111] font-bold">✕</button>
+        </div>
+
+        <form (ngSubmit)="handleSaveProduct()" class="space-y-4 text-xs font-secondary">
+          <div>
+            <label class="block font-bold text-[#111111] mb-1">Product Title (2-50 chars) *</label>
+            <input
+              type="text"
+              [ngModel]="prodFormTitle()"
+              (ngModelChange)="prodFormTitle.set($event)"
+              name="title"
+              required
+              placeholder="e.g. Sony WH-1000XM5 Headphones"
+              class="w-full px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40 focus:bg-white focus:ring-2 focus:ring-[#C96F4A]/20 focus:border-[#C96F4A]"
+            />
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block font-bold text-[#111111] mb-1">Price (EGP) *</label>
+              <input
+                type="number"
+                [ngModel]="prodFormPrice()"
+                (ngModelChange)="prodFormPrice.set($event)"
+                name="price"
+                min="1"
+                required
+                class="w-full px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40 focus:bg-white"
+              />
+            </div>
+            <div>
+              <label class="block font-bold text-[#111111] mb-1">Discount (%)</label>
+              <input
+                type="number"
+                [ngModel]="prodFormDiscount()"
+                (ngModelChange)="prodFormDiscount.set($event)"
+                name="discount"
+                min="0"
+                max="100"
+                class="w-full px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40 focus:bg-white"
+              />
+            </div>
+            <div>
+              <label class="block font-bold text-[#111111] mb-1">Stock Units *</label>
+              <input
+                type="number"
+                [ngModel]="prodFormStock()"
+                (ngModelChange)="prodFormStock.set($event)"
+                name="stock"
+                min="0"
+                required
+                class="w-full px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40 focus:bg-white"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-[#111111] mb-1">Category *</label>
+              <select
+                [ngModel]="prodFormCategory()"
+                (ngModelChange)="prodFormCategory.set($event)"
+                name="category"
+                required
+                class="w-full px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/60"
+              >
+                @for (cat of categoryBrandStore.categories(); track cat._id) {
+                  <option [value]="cat._id">{{ cat.name }}</option>
+                }
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-[#111111] mb-1">Brand</label>
+              <select
+                [ngModel]="prodFormBrand()"
+                (ngModelChange)="prodFormBrand.set($event)"
+                name="brand"
+                class="w-full px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/60"
+              >
+                <option value="">None</option>
+                @for (brand of categoryBrandStore.brands(); track brand._id) {
+                  <option [value]="brand._id">{{ brand.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-bold text-[#111111] mb-1">Description (min 25 chars) *</label>
+            <textarea
+              rows="3"
+              [ngModel]="prodFormDesc()"
+              (ngModelChange)="prodFormDesc.set($event)"
+              name="description"
+              required
+              placeholder="Detailed specs, craftsmanship, materials..."
+              class="w-full px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40 focus:bg-white"
+            ></textarea>
+          </div>
+
+          <div>
+            <label class="block font-bold text-[#111111] mb-1">
+              Main Product Image {{ editingProductId() ? '(Optional: replace existing)' : '*' }}
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              (change)="onProductFileSelected($event)"
+              class="w-full text-xs text-[#555555] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#111111] file:text-white hover:file:bg-[#C96F4A]"
+            />
+          </div>
+
+          <div>
+            <label class="block font-bold text-[#111111] mb-1">
+              Gallery Sub-Images (Optional, up to 5 additional images)
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              (change)="onSubFilesSelected($event)"
+              class="w-full text-xs text-[#555555] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#111111] file:text-white hover:file:bg-[#C96F4A]"
+            />
+            @if (selectedSubFiles().length > 0) {
+              <div class="flex flex-wrap gap-2 mt-2">
+                @for (f of selectedSubFiles(); track $index) {
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#F7F4EE] border border-[#D8D2C7] text-[11px] font-medium text-[#111111]">
+                    <span class="truncate max-w-[120px]">{{ f.name }}</span>
+                    <button
+                      type="button"
+                      (click)="removeSubFile($index)"
+                      class="text-[#888888] hover:text-rose-600 font-bold"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="pt-3 border-t border-[#D8D2C7]/60 flex items-center justify-end gap-3">
+            <button
+              type="button"
+              (click)="isCreateProductModalOpen.set(false)"
+              class="px-4 py-2 text-[#777777] hover:text-[#111111] font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              [disabled]="isSubmitting()"
+              class="px-5 py-2.5 rounded-xl bg-[#111111] hover:bg-[#C96F4A] text-white font-bold disabled:opacity-50 transition"
+            >
+              {{ isSubmitting() ? 'Saving...' : (editingProductId() ? 'Update Product' : 'Publish Product') }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- MODAL: CREATE / EDIT CATEGORY              -->
+  <!-- ========================================== -->
+  @if (isCategoryModalOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div (click)="isCategoryModalOpen.set(false)" class="absolute inset-0 bg-[#111111]/70 backdrop-blur-sm"></div>
+
+      <div class="relative w-full max-w-md bg-white rounded-3xl shadow-elevated p-6 z-10 space-y-4 border border-[#D8D2C7]">
+        <div class="flex items-center justify-between pb-3 border-b border-[#D8D2C7]/60">
+          <h3 class="font-luxury text-xl text-[#111111]">{{ editingCategoryId() ? 'Edit Category' : 'Add New Category' }}</h3>
+          <button (click)="isCategoryModalOpen.set(false)" class="text-[#888888] hover:text-[#111111]">✕</button>
+        </div>
+
+        <form (ngSubmit)="handleSaveCategory()" class="space-y-4 text-xs font-secondary">
+          <div>
+            <label class="block font-bold text-[#111111] mb-1">Category Name *</label>
+            <input
+              type="text"
+              [ngModel]="catFormName()"
+              (ngModelChange)="catFormName.set($event)"
+              name="name"
+              required
+              placeholder="e.g. Gaming & Audio"
+              class="w-full px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40"
+            />
+          </div>
+
+          <div>
+            <label class="block font-bold text-[#111111] mb-1">
+              Category Image {{ editingCategoryId() ? '(Optional)' : '*' }}
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              (change)="onCatFileSelected($event)"
+              class="w-full text-xs text-[#555555] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#111111] file:text-white hover:file:bg-[#C96F4A]"
+            />
+          </div>
+
+          <div class="pt-3 border-t border-[#D8D2C7]/60 flex items-center justify-end gap-3">
+            <button type="button" (click)="isCategoryModalOpen.set(false)" class="px-4 py-2 text-[#777777]">Cancel</button>
+            <button type="submit" [disabled]="isSubmitting()" class="px-5 py-2.5 rounded-xl bg-[#111111] hover:bg-[#C96F4A] text-white font-bold">
+              {{ isSubmitting() ? 'Saving...' : 'Save Category' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- MODAL: CREATE / EDIT BRAND                 -->
+  <!-- ========================================== -->
+  @if (isBrandModalOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div (click)="isBrandModalOpen.set(false)" class="absolute inset-0 bg-[#111111]/70 backdrop-blur-sm"></div>
+
+      <div class="relative w-full max-w-md bg-white rounded-3xl shadow-elevated p-6 z-10 space-y-4 border border-[#D8D2C7]">
+        <div class="flex items-center justify-between pb-3 border-b border-[#D8D2C7]/60">
+          <h3 class="font-luxury text-xl text-[#111111]">{{ editingBrandId() ? 'Edit Brand' : 'Add New Brand' }}</h3>
+          <button (click)="isBrandModalOpen.set(false)" class="text-[#888888] hover:text-[#111111]">✕</button>
+        </div>
+
+        <form (ngSubmit)="handleSaveBrand()" class="space-y-4 text-xs font-secondary">
+          <div>
+            <label class="block font-bold text-[#111111] mb-1">Brand Name *</label>
+            <input
+              type="text"
+              [ngModel]="brandFormName()"
+              (ngModelChange)="brandFormName.set($event)"
+              name="name"
+              required
+              placeholder="e.g. Bang & Olufsen"
+              class="w-full px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40"
+            />
+          </div>
+
+          <div>
+            <label class="block font-bold text-[#111111] mb-1">Description</label>
+            <input
+              type="text"
+              [ngModel]="brandFormDesc()"
+              (ngModelChange)="brandFormDesc.set($event)"
+              name="description"
+              placeholder="Official high-end electronics house"
+              class="w-full px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40"
+            />
+          </div>
+
+          <div>
+            <label class="block font-bold text-[#111111] mb-1">
+              Brand Logo {{ editingBrandId() ? '(Optional)' : '*' }}
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              (change)="onBrandFileSelected($event)"
+              class="w-full text-xs text-[#555555] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#111111] file:text-white hover:file:bg-[#C96F4A]"
+            />
+          </div>
+
+          <div class="pt-3 border-t border-[#D8D2C7]/60 flex items-center justify-end gap-3">
+            <button type="button" (click)="isBrandModalOpen.set(false)" class="px-4 py-2 text-[#777777]">Cancel</button>
+            <button type="submit" [disabled]="isSubmitting()" class="px-5 py-2.5 rounded-xl bg-[#111111] hover:bg-[#C96F4A] text-white font-bold">
+              {{ isSubmitting() ? 'Saving...' : 'Save Brand' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- MODAL: CREATE COUPON                       -->
+  <!-- ========================================== -->
+  @if (isCreateCouponModalOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div (click)="isCreateCouponModalOpen.set(false)" class="absolute inset-0 bg-[#111111]/70 backdrop-blur-sm"></div>
+
+      <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-elevated p-6 z-10 space-y-4 border border-[#D8D2C7]">
+        <div class="flex items-center justify-between pb-3 border-b border-[#D8D2C7]/60">
+          <h3 class="font-luxury text-xl text-[#111111]">Create Discount Coupon</h3>
+          <button (click)="isCreateCouponModalOpen.set(false)">✕</button>
+        </div>
+
+        <form (ngSubmit)="handleCreateCoupon()" class="space-y-4 text-xs font-secondary">
+          <div>
+            <label class="block font-bold text-[#111111] mb-1">Discount Percentage (%) *</label>
+            <input
+              type="number"
+              [ngModel]="newCouponAmount()"
+              (ngModelChange)="newCouponAmount.set($event)"
+              name="amount"
+              min="1"
+              max="100"
+              required
+              class="w-full px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40"
+            />
+          </div>
+
+          <div>
+            <label class="block font-bold text-[#111111] mb-1">Start Date *</label>
+            <input
+              type="date"
+              [ngModel]="newCouponStartDate()"
+              (ngModelChange)="newCouponStartDate.set($event)"
+              name="startDate"
+              required
+              class="w-full px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40"
+            />
+          </div>
+
+          <div>
+            <label class="block font-bold text-[#111111] mb-1">End Date *</label>
+            <input
+              type="date"
+              [ngModel]="newCouponEndDate()"
+              (ngModelChange)="newCouponEndDate.set($event)"
+              name="endDate"
+              required
+              class="w-full px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40"
+            />
+          </div>
+
+          <div class="pt-3 border-t border-[#D8D2C7]/60 flex items-center justify-end gap-3">
+            <button type="button" (click)="isCreateCouponModalOpen.set(false)" class="px-4 py-2 text-[#777777]">Cancel</button>
+            <button type="submit" [disabled]="isSubmitting()" class="px-5 py-2.5 rounded-xl bg-[#111111] hover:bg-[#C96F4A] text-white font-bold">
+              Create Coupon
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- MODAL: ORDER DETAILS INSPECTOR             -->
+  <!-- ========================================== -->
+  @if (isOrderDetailsModalOpen() && selectedOrder(); as ord) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div (click)="closeOrderDetails()" class="absolute inset-0 bg-[#111111]/70 backdrop-blur-sm animate-fade-in"></div>
+
+      <div class="relative w-full max-w-2xl bg-white rounded-3xl shadow-elevated p-6 sm:p-8 z-10 space-y-6 max-h-[90vh] overflow-y-auto border border-[#D8D2C7] animate-scale-in">
+        <!-- Modal Header -->
+        <div class="flex items-start justify-between pb-4 border-b border-[#D8D2C7]/60">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#111111] text-white">
+                #{{ ord._id.toUpperCase() }}
+              </span>
+              <span class="text-xs text-[#888888] font-secondary">{{ ord.createdAt | date:'medium' }}</span>
+            </div>
+            <h3 class="font-luxury text-2xl text-[#111111]">Order Specification</h3>
+          </div>
+          <button (click)="closeOrderDetails()" class="p-2 text-[#888888] hover:text-[#111111] rounded-xl hover:bg-[#F7F4EE] transition text-sm font-bold">
+            ✕
+          </button>
+        </div>
+
+        <!-- Status Bar Controls -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-2xl bg-[#F7F4EE] border border-[#D8D2C7]/60 text-xs">
+          <div>
+            <label class="text-[10px] font-bold text-[#888888] uppercase block mb-1">Update Order Status</label>
+            <select
+              [ngModel]="ord.status"
+              (ngModelChange)="handleUpdateOrderStatus(ord._id, $event)"
+              class="w-full px-3 py-1.5 rounded-xl border border-[#D8D2C7] bg-white font-bold text-[#111111] uppercase text-[11px] focus:outline-none focus:ring-2 focus:ring-[#C96F4A]/20"
+            >
+              <option value="pending">Pending</option>
+              <option value="shipping">In Transit (Shipping)</option>
+              <option value="DELIVERED">Delivered to Client</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-bold text-[#888888] uppercase block mb-1">Update Payment Status</label>
+            <select
+              [ngModel]="ord.paymentStatus"
+              (ngModelChange)="handleUpdatePaymentStatus(ord._id, $event)"
+              class="w-full px-3 py-1.5 rounded-xl border border-[#D8D2C7] bg-white font-bold text-[#111111] uppercase text-[11px] focus:outline-none focus:ring-2 focus:ring-[#C96F4A]/20"
+            >
+              <option value="pending">Pending Verification</option>
+              <option value="paid">Paid & Settled</option>
+              <option value="unpaid">Unpaid</option>
+              <option value="refunded">Refunded</option>
+            </select>
+          </div>
+
+          <div>
+            <span class="text-[10px] font-bold text-[#888888] uppercase block mb-1">Payment Method</span>
+            <div class="px-3 py-1.5 rounded-xl bg-white border border-[#D8D2C7] font-bold text-[#111111] uppercase text-[11px]">
+              {{ ord.paymentMethod === 'card' ? 'Paymob (Card)' : 'Cash On Delivery' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer & Delivery Information -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold text-[#111111] uppercase tracking-wider">Client & Delivery Details</h4>
+          <div class="p-4 rounded-2xl bg-white border border-[#D8D2C7]/60 shadow-soft grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-secondary">
+            <div>
+              <span class="text-[11px] text-[#888888] block">Client Name:</span>
+              <p class="font-bold text-[#111111] mt-0.5">{{ getOrderCustomerName(ord) }}</p>
+            </div>
+
+            @if (getOrderCustomerEmail(ord)) {
+              <div>
+                <span class="text-[11px] text-[#888888] block">Email Address:</span>
+                <p class="font-bold text-[#111111] mt-0.5">{{ getOrderCustomerEmail(ord) }}</p>
+              </div>
+            }
+
+            <div>
+              <span class="text-[11px] text-[#888888] block">Contact Phone:</span>
+              <p class="font-bold text-[#111111] mt-0.5">{{ ord.phone }}</p>
+            </div>
+
+            <div class="sm:col-span-2">
+              <span class="text-[11px] text-[#888888] block">Full Delivery Address:</span>
+              <p class="font-bold text-[#111111] mt-0.5">{{ ord.address }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products Breakdown -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold text-[#111111] uppercase tracking-wider">Purchased Products</h4>
+          
+          @if (getOrderProducts(ord).length > 0) {
+            <div class="border border-[#D8D2C7]/60 rounded-2xl divide-y divide-[#D8D2C7]/40 overflow-hidden">
+              @for (item of getOrderProducts(ord); track item.product?._id || $index) {
+                <div class="p-3.5 flex items-center gap-3.5 bg-white">
+                  <img
+                    [src]="item.product?.mainImage | imageUrl"
+                    [alt]="item.product?.title || 'Product'"
+                    class="w-12 h-12 rounded-xl object-cover bg-[#F7F4EE] border border-[#D8D2C7]/50 shrink-0"
+                  />
+                  <div class="flex-1 min-w-0">
+                    <h5 class="text-xs font-bold text-[#111111] truncate">{{ item.product?.title || 'Product Item' }}</h5>
+                    <p class="text-[11px] text-[#777777] font-secondary mt-0.5">
+                      EGP {{ item.finalPrice || item.product?.priceAfterDiscount || item.product?.price || 0 | number:'1.2-2' }} × {{ item.quantity }} units
+                    </p>
+                  </div>
+                  <span class="text-xs font-bold text-[#111111]">
+                    EGP {{ (item.finalPrice || item.product?.priceAfterDiscount || item.product?.price || 0) * item.quantity | number:'1.2-2' }}
+                  </span>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="p-4 rounded-2xl bg-[#F7F4EE] text-center text-xs text-[#777777] border border-[#D8D2C7]/60 font-secondary">
+              Order items recorded under active transaction package.
+            </div>
+          }
+        </div>
+
+        <!-- Financial Summary -->
+        <div class="p-4 rounded-2xl bg-[#F7F4EE] border border-[#D8D2C7]/60 space-y-2 text-xs font-secondary">
+          <div class="flex justify-between text-[#777777]">
+            <span>Delivery Method:</span>
+            <span class="font-bold text-emerald-700">Complimentary Express</span>
+          </div>
+          <div class="flex justify-between text-base font-extrabold text-[#111111] pt-2 border-t border-[#D8D2C7]/60">
+            <span>Total Order Amount:</span>
+            <span class="text-[#C96F4A] text-lg font-extrabold">EGP {{ ord.totalPrice | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-3 border-t border-[#D8D2C7]/60 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            @if (ord.paymentStatus === 'paid') {
+              <button
+                type="button"
+                (click)="refundOrder(ord._id)"
+                class="px-4 py-2 text-xs font-bold rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-600 hover:text-white border border-rose-200 transition"
+              >
+                Issue Full Refund
+              </button>
+            }
+            <button
+              type="button"
+              (click)="deleteOrder(ord._id)"
+              class="px-4 py-2 text-xs font-bold rounded-xl text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition"
+            >
+              Delete Order
+            </button>
+          </div>
+
+          <button
+            type="button"
+            (click)="closeOrderDetails()"
+            class="px-5 py-2.5 rounded-xl bg-[#111111] hover:bg-[#C96F4A] active:scale-95 text-white font-bold text-xs transition shadow-md"
+          >
+            Close Details
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

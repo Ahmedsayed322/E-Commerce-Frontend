@@ -1,0 +1,226 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+  <!-- Breadcrumb & Header -->
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-xs text-[#888888] mb-2 font-secondary">
+      <a routerLink="/" class="hover:text-[#111111]">Home</a>
+      <span>/</span>
+      <span class="text-[#111111] font-semibold">Catalog</span>
+    </div>
+    <h1 class="font-luxury text-3xl sm:text-4xl text-[#111111] tracking-tight">Explore the Collection</h1>
+    <p class="text-xs sm:text-sm text-[#777777] mt-1 font-secondary">Discover exceptional craftsmanship across audio, smart electronics, fashion, and lifestyle</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <!-- Sidebar Filters -->
+    <aside class="space-y-6">
+      <!-- Active Filter Pill Box -->
+      @if (productsStore.hasActiveFilters()) {
+        <div class="p-4 rounded-2xl bg-[#C96F4A]/10 border border-[#C96F4A]/20 flex items-center justify-between animate-fade-in">
+          <span class="text-xs font-bold text-[#C96F4A]">Filters Applied</span>
+          <button
+            type="button"
+            (click)="productsStore.resetFilters()"
+            class="text-xs text-[#C96F4A] hover:underline font-bold"
+          >
+            Reset All
+          </button>
+        </div>
+      }
+
+      <!-- Search Filter -->
+      <div class="bg-white p-5 rounded-2xl border border-[#D8D2C7]/60 shadow-soft">
+        <h4 class="text-xs font-bold text-[#111111] uppercase tracking-wider mb-3">Search Keyword</h4>
+        <div class="relative">
+          <input
+            type="text"
+            [ngModel]="productsStore.searchQuery()"
+            (ngModelChange)="productsStore.setSearch($event)"
+            placeholder="Search by title..."
+            class="w-full px-3.5 py-2 text-xs rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40 text-[#111111] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#C96F4A]/20 focus:border-[#C96F4A]"
+          />
+        </div>
+      </div>
+
+      <!-- Categories Filter -->
+      <div class="bg-white p-5 rounded-2xl border border-[#D8D2C7]/60 shadow-soft">
+        <h4 class="text-xs font-bold text-[#111111] uppercase tracking-wider mb-3">Departments</h4>
+        <div class="space-y-1">
+          <button
+            type="button"
+            (click)="productsStore.setCategory(null)"
+            [class]="!productsStore.selectedCategory() ? 'bg-[#111111] text-white font-bold' : 'text-[#111111] hover:bg-[#F7F4EE]'"
+            class="w-full text-left px-3 py-2 text-xs rounded-xl transition flex items-center justify-between"
+          >
+            <span>All Categories</span>
+            <span class="text-[10px]" [class]="!productsStore.selectedCategory() ? 'text-[#D8D2C7]' : 'text-[#888888]'">
+              {{ productsStore.products().length }}
+            </span>
+          </button>
+
+          @for (cat of categoryBrandStore.categories(); track cat._id) {
+            <button
+              type="button"
+              (click)="productsStore.setCategory(cat._id)"
+              [class]="productsStore.selectedCategory() === cat._id ? 'bg-[#111111] text-white font-bold' : 'text-[#111111] hover:bg-[#F7F4EE]'"
+              class="w-full text-left px-3 py-2 text-xs rounded-xl transition flex items-center justify-between"
+            >
+              <span class="truncate pr-2">{{ cat.name }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Brands Filter -->
+      <div class="bg-white p-5 rounded-2xl border border-[#D8D2C7]/60 shadow-soft">
+        <h4 class="text-xs font-bold text-[#111111] uppercase tracking-wider mb-3">Brands</h4>
+        <div class="space-y-1">
+          <button
+            type="button"
+            (click)="productsStore.setBrand(null)"
+            [class]="!productsStore.selectedBrand() ? 'bg-[#111111] text-white font-bold' : 'text-[#111111] hover:bg-[#F7F4EE]'"
+            class="w-full text-left px-3 py-2 text-xs rounded-xl transition"
+          >
+            All Brands
+          </button>
+
+          @for (brand of categoryBrandStore.brands(); track brand._id) {
+            <button
+              type="button"
+              (click)="productsStore.setBrand(brand._id)"
+              [class]="productsStore.selectedBrand() === brand._id ? 'bg-[#111111] text-white font-bold' : 'text-[#111111] hover:bg-[#F7F4EE]'"
+              class="w-full text-left px-3 py-2 text-xs rounded-xl transition flex items-center gap-2"
+            >
+              <span class="w-1.5 h-1.5 rounded-full" [class]="productsStore.selectedBrand() === brand._id ? 'bg-[#C96F4A]' : 'bg-[#D8D2C7]'"></span>
+              <span class="truncate">{{ brand.name }}</span>
+            </button>
+          }
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Products View -->
+    <main class="lg:col-span-3 space-y-6">
+      <!-- Top Sort & Summary Bar -->
+      <div class="bg-white p-4 rounded-2xl border border-[#D8D2C7]/60 shadow-soft flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-xs text-[#777777]">
+          Showing <strong class="text-[#111111]">{{ productsStore.paginatedProducts().length }}</strong> of <strong class="text-[#111111]">{{ productsStore.filteredProducts().length }}</strong> pieces
+          (Page {{ productsStore.currentPage() }} of {{ productsStore.totalPages() }})
+        </p>
+
+        <!-- Sort By Selector -->
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <label class="text-xs font-medium text-[#777777] shrink-0">Sort by:</label>
+          <select
+            [ngModel]="productsStore.sortBy()"
+            (ngModelChange)="productsStore.setSort($event)"
+            class="px-3 py-1.5 text-xs rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40 text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#C96F4A]/20 font-semibold"
+          >
+            <option value="featured">Featured Picks</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="rating">Highest Rated</option>
+            <option value="newest">Newest Arrivals</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Luxury Skeleton Shimmer Loading (6 cards) -->
+      @if (productsStore.loading()) {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+          @for (i of [1,2,3,4,5,6]; track i) {
+            <div class="bg-white rounded-2xl border border-[#D8D2C7]/60 p-0 overflow-hidden flex flex-col shadow-soft">
+              <div class="aspect-square w-full skeleton-shimmer"></div>
+              <div class="p-4 space-y-3 flex-1 flex flex-col justify-between">
+                <div class="space-y-2">
+                  <div class="h-3 w-1/3 rounded-md skeleton-shimmer"></div>
+                  <div class="h-4 w-3/4 rounded-md skeleton-shimmer"></div>
+                  <div class="h-4 w-1/2 rounded-md skeleton-shimmer"></div>
+                </div>
+                <div class="pt-3 border-t border-[#D8D2C7]/40 flex items-center justify-between">
+                  <div class="h-5 w-20 rounded-md skeleton-shimmer"></div>
+                  <div class="h-9 w-9 rounded-xl skeleton-shimmer"></div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else if (productsStore.filteredProducts().length === 0) {
+        <div class="bg-white rounded-3xl p-12 text-center border border-[#D8D2C7]/60 shadow-soft animate-fade-in-up">
+          <div class="w-16 h-16 rounded-full bg-[#F7F4EE] text-[#888888] flex items-center justify-center mx-auto mb-4 border border-[#D8D2C7]/60">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <h3 class="font-luxury text-xl font-bold text-[#111111] mb-1">No products match your criteria</h3>
+          <p class="text-xs text-[#777777] max-w-sm mx-auto mb-6 font-secondary">
+            Try adjusting your search query or selecting another department to view other items.
+          </p>
+          <button
+            type="button"
+            (click)="productsStore.resetFilters()"
+            class="px-6 py-2.5 rounded-xl bg-[#111111] hover:bg-[#C96F4A] active:scale-95 text-white text-xs font-bold shadow-md transition"
+          >
+            Reset All Filters
+          </button>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch animate-fade-in-up">
+          @for (product of productsStore.paginatedProducts(); track product._id) {
+            <app-product-card [product]="product" />
+          }
+        </div>
+
+        <!-- Pagination Controls (6 items per page) -->
+        @if (productsStore.totalPages() > 1) {
+          <div class="pt-8 pb-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#D8D2C7]/60">
+            <p class="text-xs text-[#777777] font-secondary">
+              Page <strong class="text-[#111111]">{{ productsStore.currentPage() }}</strong> of <strong class="text-[#111111]">{{ productsStore.totalPages() }}</strong>
+            </p>
+
+            <div class="flex items-center gap-1.5">
+              <!-- Previous Page -->
+              <button
+                type="button"
+                (click)="productsStore.prevPage()"
+                [disabled]="productsStore.currentPage() === 1"
+                class="px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-white text-[#111111] hover:bg-[#F7F4EE] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold transition active:scale-95 flex items-center gap-1"
+                title="Previous Page"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                <span>Prev</span>
+              </button>
+
+              <!-- Page Number Buttons -->
+              @for (pageNum of productsStore.pagesArray(); track pageNum) {
+                <button
+                  type="button"
+                  (click)="productsStore.setPage(pageNum)"
+                  [class]="productsStore.currentPage() === pageNum ? 'bg-[#111111] text-white border-[#111111] shadow-sm font-extrabold scale-105' : 'bg-white text-[#111111] border-[#D8D2C7] hover:bg-[#F7F4EE] hover:border-[#C96F4A] font-bold'"
+                  class="w-9 h-9 rounded-xl border text-xs transition active:scale-90 flex items-center justify-center"
+                >
+                  {{ pageNum }}
+                </button>
+              }
+
+              <!-- Next Page -->
+              <button
+                type="button"
+                (click)="productsStore.nextPage()"
+                [disabled]="productsStore.currentPage() === productsStore.totalPages()"
+                class="px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-white text-[#111111] hover:bg-[#F7F4EE] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold transition active:scale-95 flex items-center gap-1"
+                title="Next Page"
+              >
+                <span>Next</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </main>
+  </div>
+</div>
