@@ -82,17 +82,17 @@
                 <button
                   type="button"
                   (click)="setHeroIndex(i)"
-                  class="group relative w-20 h-20 sm:w-24 sm:h-24 p-2 rounded-2xl bg-white/95 backdrop-blur-md border transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md flex items-center justify-center cursor-pointer overflow-hidden"
-                  [ngClass]="activeHeroIndex() === i ? 'border-[#111111] ring-2 ring-[#111111]/25 shadow-md scale-105' : 'border-[#D8D2C7] opacity-75 hover:opacity-100'"
+                  class="group relative w-18 h-18 sm:w-22 sm:h-22 rounded-2xl border-2 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md flex items-center justify-center cursor-pointer overflow-hidden bg-white shadow-xs"
+                  [ngClass]="activeHeroIndex() === i ? 'border-[#111111] ring-2 ring-[#111111]/30 shadow-md scale-105' : 'border-[#D8D2C7] opacity-70 hover:opacity-100'"
                   [title]="prod.title"
                 >
                   <img
                     [src]="prod.mainImage | imageUrl"
                     [alt]="prod.title"
-                    class="w-full h-full object-cover rounded-xl group-hover:scale-105 transition duration-300"
+                    class="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-500 ease-out"
                   />
                   @if (activeHeroIndex() === i) {
-                    <span class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#C96F4A] border-2 border-white shadow-xs"></span>
+                    <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-[#C96F4A] ring-2 ring-white shadow-xs"></span>
                   }
                 </button>
               }

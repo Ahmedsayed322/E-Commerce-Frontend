@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit {
   heroProducts = computed<Product[]>(() => {
     const list = this.productsStore.products();
     if (!list || list.length === 0) return [];
-    return list.slice(0, 4);
+    return list.filter((p) => p.stock > 0).slice(0, 3);
   });
 
   currentHeroProduct = computed<Product | null>(() => {
