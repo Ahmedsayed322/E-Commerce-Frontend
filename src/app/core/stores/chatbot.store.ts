@@ -32,7 +32,7 @@ const initialChatbotState: ChatbotState = {
     {
       id: 'welcome-1',
       sender: 'assistant',
-      text: 'Greetings! I am your OWEL Luxury AI Concierge. How may I assist your shopping journey today? You can inquire regarding our audio masterpieces, express delivery, discount codes, or order tracking.',
+      text: 'Hello! I am your OWEL Support Assistant. How can I help you today? You can ask about product specifications, stock availability, discount codes, or order tracking.',
       timestamp: new Date(),
     },
   ],
@@ -60,12 +60,13 @@ export const ChatbotStore = signalStore(
       patchState(store, { userInput: input });
     },
     clearChat() {
+      chatbotService.resetSessionId();
       patchState(store, {
         messages: [
           {
             id: `welcome-${Date.now()}`,
             sender: 'assistant',
-            text: 'Chat history cleared. How else may I assist you today?',
+            text: 'Chat history cleared and new session started. How can I help you today?',
             timestamp: new Date(),
           },
         ],
@@ -105,7 +106,7 @@ export const ChatbotStore = signalStore(
               const errorMsg: ChatMessage = {
                 id: `assistant-${Date.now()}`,
                 sender: 'assistant',
-                text: 'I apologize, our luxury concierge server is momentarily experiencing high demand. Please try again in a moment.',
+                text: 'Our assistant is temporarily reconnecting. Please try again in a moment or email us at support@owel.com.',
                 timestamp: new Date(),
               };
               patchState(store, {
