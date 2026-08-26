@@ -43,6 +43,7 @@
                 "clang-ammonium-unlit.ngrok-free.dev",
                 "*.vercel.app",
                 "vercel.app",
+                "owel-gamma.vercel.app",
                 "*.now.sh"
               ]
             }

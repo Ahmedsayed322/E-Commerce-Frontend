@@ -8,6 +8,9 @@
       <img
         [src]="product().mainImage | imageUrl"
         [alt]="product().title"
+        width="400"
+        height="400"
+        decoding="async"
         class="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
         [class.grayscale-50]="product().stock <= 0"
         loading="lazy"

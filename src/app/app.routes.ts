@@ -7,6 +7,7 @@ import { CheckoutComponent } from './features/checkout/checkout.component';
 import { WishlistComponent } from './features/wishlist/wishlist.component';
 import { OrdersComponent } from './features/orders/orders.component';
 import { AdminDashboardComponent } from './features/admin/admin-dashboard.component';
+import { NotFoundComponent } from './features/not-found/not-found.component';
 import { authGuard, adminGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -56,6 +57,7 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '',
+    component: NotFoundComponent,
+    title: '404 Page Not Found — OWEL',
   },
 ];

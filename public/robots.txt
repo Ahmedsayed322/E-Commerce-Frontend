@@ -1,0 +1,17 @@
+# Robots.txt for OWEL Luxury E-Commerce Platform
+User-agent: *
+Allow: /
+Allow: /shop
+Allow: /shop?*
+Allow: /product/*
+Allow: /wishlist
+
+# Disallow private user & administrative routes
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /checkout
+Disallow: /orders
+Disallow: /cart
+
+# Host & Sitemap
+Sitemap: https://owel-gamma.vercel.app/sitemap.xml
