@@ -1,36 +1,64 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-  <div>
-    <h1 class="font-luxury text-3xl sm:text-4xl text-[#111111] tracking-tight">Saved Wishlist</h1>
-    <p class="text-xs sm:text-sm text-[#777777] mt-1 font-secondary">Keep track of the bespoke items you admire and intend to acquire</p>
-  </div>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in min-h-[65vh]">
+  <!-- Breadcrumb & Header -->
+  <header class="space-y-2 border-b border-[#D8D2C7]/60 pb-6">
+    <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs text-[#888888] font-secondary">
+      <a routerLink="/" class="hover:text-[#111111] transition">Home</a>
+      <span>/</span>
+      <span class="text-[#111111] font-semibold">Wishlist</span>
+    </nav>
+    <h1 class="font-luxury text-3xl sm:text-4xl text-[#111111] tracking-tight font-bold">
+      Saved Wishlist & Favorite Luxury Products
+    </h1>
+    <p class="text-xs sm:text-sm text-[#777777] font-secondary max-w-2xl">
+      Manage your private collection of saved electronics, audiophile audio systems, and luxury pieces.
+    </p>
+  </header>
 
+  <!-- Loading Skeletons with Fixed Aspect Ratio (Zero CLS) -->
   @if (wishlistStore.loading()) {
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      @for (i of [1,2,3,4]; track i) {
-        <div class="animate-pulse bg-[#D8D2C7]/40 rounded-2xl aspect-[3/4]"></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="bg-white rounded-2xl border border-[#D8D2C7]/60 overflow-hidden shadow-soft flex flex-col">
+          <div class="w-full aspect-square bg-[#F7F4EE] animate-pulse"></div>
+          <div class="p-4 space-y-3 flex-1 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="h-3 w-1/3 bg-[#E8E2D7] rounded-full animate-pulse"></div>
+              <div class="h-4 w-4/5 bg-[#E8E2D7] rounded-full animate-pulse"></div>
+            </div>
+            <div class="h-8 w-full bg-[#E8E2D7] rounded-xl animate-pulse mt-4"></div>
+          </div>
+        </div>
       }
     </div>
   } @else if (wishlistStore.isEmpty()) {
-    <div class="bg-white rounded-3xl p-12 text-center border border-[#D8D2C7]/60 shadow-soft max-w-lg mx-auto">
-      <div class="w-16 h-16 rounded-full bg-[#F7F4EE] text-[#888888] flex items-center justify-center mx-auto mb-4 border border-[#D8D2C7]/60">
-        <svg class="w-8 h-8 text-[#C96F4A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <!-- Empty Wishlist State -->
+    <div class="bg-white rounded-3xl p-8 sm:p-14 text-center border border-[#D8D2C7]/60 shadow-soft max-w-lg mx-auto space-y-4 my-8">
+      <div class="w-16 h-16 rounded-full bg-[#F7F4EE] text-[#C96F4A] flex items-center justify-center mx-auto border border-[#D8D2C7]/60 shadow-inner">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
       </div>
-      <h3 class="font-luxury text-xl font-bold text-[#111111] mb-1">Your wishlist is empty</h3>
-      <p class="text-xs text-[#777777] mb-6 font-secondary">Explore our catalog and bookmark items with the heart icon to view them later.</p>
-      <a
-        routerLink="/shop"
-        class="px-6 py-3 rounded-xl bg-[#111111] hover:bg-[#C96F4A] text-white text-xs font-bold shadow-md transition inline-block"
-      >
-        Discover Products
-      </a>
+      <div class="space-y-1">
+        <h2 class="font-luxury text-xl sm:text-2xl font-bold text-[#111111]">Your Wishlist is Empty</h2>
+        <p class="text-xs sm:text-sm text-[#777777] font-secondary max-w-sm mx-auto">
+          Explore our curated catalog and tap the heart icon on any product to bookmark it for later.
+        </p>
+      </div>
+      <div class="pt-2">
+        <a
+          routerLink="/shop"
+          class="inline-block px-7 py-3.5 rounded-xl bg-[#111111] hover:bg-[#C96F4A] text-white text-xs font-bold shadow-md transition duration-300 active:scale-95 uppercase tracking-wider"
+        >
+          Discover Products
+        </a>
+      </div>
     </div>
   } @else {
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+    <!-- Active Wishlist Grid -->
+    <section aria-label="Wishlist Products Grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
       @for (product of wishlistStore.products(); track product._id) {
         <app-product-card [product]="product" />
       }
-    </div>
+    </section>
   }
-</div>
+</main>

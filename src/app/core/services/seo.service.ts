@@ -138,34 +138,56 @@ export class SeoService {
       });
     } else if (url.startsWith('/shop')) {
       this.setSeoData({
-        title: 'Curated Catalog & Masterpieces',
+        title: 'Shop Curated Luxury Electronics & High-End Tech | OWEL',
         description:
-          'Explore the full OWEL catalog of master-tuned acoustics, smart flagship devices, and luxury lifestyle accessories.',
+          'Browse and buy flagship smartphones, audiophile acoustics, high-end smartwatches, and designer electronics online at OWEL with fast express delivery in Egypt.',
+        keywords:
+          'buy luxury electronics, shop smartphones online, iPhone 16 Pro Max, Sony headphones, MacBook Pro, audiophile audio, OWEL shop, luxury e-commerce Egypt',
+        jsonLd: {
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: 'OWEL Curated Luxury Electronics Catalog',
+          url: 'https://owel-gamma.vercel.app/shop',
+          description:
+            'Browse and buy flagship smartphones, audiophile acoustics, high-end smartwatches, and designer electronics online at OWEL.',
+        },
       });
     } else if (url.startsWith('/cart')) {
       this.setSeoData({
-        title: 'Shopping Bag',
-        description: 'Review your selected acquisitions and apply member privilege discount coupons.',
+        title: 'Shopping Bag & Member Privileges | OWEL',
+        description: 'Review your selected acquisitions, apply member privilege discount coupons, and proceed to secure checkout at OWEL.',
+        keywords: 'shopping bag, luxury cart, checkout online, OWEL discount coupon',
       });
     } else if (url.startsWith('/checkout')) {
       this.setSeoData({
-        title: 'Secure Concierge Checkout',
-        description: 'Instant and secure checkout via 3D Secure Paymob card gateway or Cash on Delivery.',
+        title: 'Secure Concierge Checkout | OWEL',
+        description: 'Instant and secure checkout via 3D Secure Paymob card gateway or Cash on Delivery at OWEL.',
+        keywords: 'secure checkout, paymob payment, online shopping Egypt, OWEL payment',
       });
     } else if (url.startsWith('/orders')) {
       this.setSeoData({
-        title: 'My Orders & Receipts',
-        description: 'Track real-time courier shipping status and review authentic purchase receipts.',
+        title: 'My Orders & Purchase Receipts | OWEL',
+        description: 'Track real-time courier shipping status, view tracking numbers, and access authentic purchase receipts at OWEL.',
+        keywords: 'order tracking, purchase history, invoices, OWEL orders',
       });
     } else if (url.startsWith('/wishlist')) {
       this.setSeoData({
-        title: 'Saved Curations & Wishlist',
-        description: 'Your private collection of desired luxury pieces and electronics.',
+        title: 'Saved Wishlist & Favorite Luxury Products | OWEL',
+        description:
+          'Manage your private wishlist of luxury electronics, designer pieces, and audiophile acoustics. Save desired items and enjoy instant secure checkout.',
+        keywords:
+          'saved wishlist, luxury favorites, buy later, OWEL wishlist, saved electronics, bookmark products, favorite gadgets',
+        jsonLd: {
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: 'OWEL Member Saved Wishlist',
+          url: 'https://owel-gamma.vercel.app/wishlist',
+        },
       });
     } else if (url.startsWith('/admin')) {
       this.setSeoData({
-        title: 'Admin Command Console',
-        description: 'OWEL Store Management Console.',
+        title: 'Admin Command Console | OWEL',
+        description: 'OWEL Store Management and Inventory Control Console.',
       });
     }
   }

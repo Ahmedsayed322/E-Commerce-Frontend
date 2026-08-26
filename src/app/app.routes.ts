@@ -19,7 +19,7 @@ export const routes: Routes = [
   {
     path: 'shop',
     component: ShopComponent,
-    title: 'Shop Catalog — OWEL',
+    title: 'Shop Curated Luxury Electronics & High-End Tech | OWEL',
   },
   {
     path: 'product/:id',
@@ -29,19 +29,19 @@ export const routes: Routes = [
   {
     path: 'cart',
     component: CartComponent,
-    title: 'Shopping Bag — OWEL',
+    title: 'Shopping Bag & Member Privileges | OWEL',
   },
   {
     path: 'checkout',
     component: CheckoutComponent,
     canActivate: [authGuard],
-    title: 'Checkout & Shipping — OWEL',
+    title: 'Secure Concierge Checkout | OWEL',
   },
   {
     path: 'wishlist',
     component: WishlistComponent,
     canActivate: [authGuard],
-    title: 'Saved Wishlist — OWEL',
+    title: 'Saved Wishlist & Favorite Luxury Products | OWEL',
   },
   {
     path: 'orders',
