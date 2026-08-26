@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { TokenService } from './token.service';
+import { environment } from '../../../environments/environment';
 import {
   ApiResponse,
   Brand,
@@ -22,7 +23,7 @@ import {
 export class ApiService {
   private http = inject(HttpClient);
   private tokenService = inject(TokenService);
-  private baseUrl = 'http://localhost:3000/api';
+  private baseUrl = environment.apiUrl;
 
   // --- AUTH / USER ---
   signup(data: {
@@ -41,8 +42,14 @@ export class ApiService {
     return this.http.post<ApiResponse>(`${this.baseUrl}/user/signup`, payload);
   }
 
-  signin(data: { email: string; password: string }): Observable<ApiResponse<{ accessToken: string; refreshToken: string }>> {
-    return this.http.post<ApiResponse<{ accessToken: string; refreshToken: string }>>(`${this.baseUrl}/user/signin`, data);
+  signin(data: {
+    email: string;
+    password: string;
+  }): Observable<ApiResponse<{ accessToken: string; refreshToken: string }>> {
+    return this.http.post<ApiResponse<{ accessToken: string; refreshToken: string }>>(
+      `${this.baseUrl}/user/signin`,
+      data,
+    );
   }
 
   getProfile(): Observable<ApiResponse<{ user: User }>> {
@@ -74,7 +81,9 @@ export class ApiService {
   }
 
   getProductById(id: string): Observable<ApiResponse<{ product: Product } | Product>> {
-    return this.http.get<ApiResponse<{ product: Product } | Product>>(`${this.baseUrl}/products/${id}`);
+    return this.http.get<ApiResponse<{ product: Product } | Product>>(
+      `${this.baseUrl}/products/${id}`,
+    );
   }
 
   createProduct(formData: FormData): Observable<ApiResponse> {
@@ -161,25 +170,38 @@ export class ApiService {
     });
   }
 
-  adjustCartQuantity(productId: string, quantity: number): Observable<ApiResponse<{ cart: Cart } | Cart>> {
-    return this.http.patch<ApiResponse<{ cart: Cart } | Cart>>(`${this.baseUrl}/cart/${productId}/quantity`, {
-      quantity: Number(quantity),
-    });
+  adjustCartQuantity(
+    productId: string,
+    quantity: number,
+  ): Observable<ApiResponse<{ cart: Cart } | Cart>> {
+    return this.http.patch<ApiResponse<{ cart: Cart } | Cart>>(
+      `${this.baseUrl}/cart/${productId}/quantity`,
+      {
+        quantity: Number(quantity),
+      },
+    );
   }
 
   removeFromCart(productId: string): Observable<ApiResponse<{ cart: Cart } | Cart>> {
-    return this.http.delete<ApiResponse<{ cart: Cart } | Cart>>(`${this.baseUrl}/cart/remove/${productId}`);
+    return this.http.delete<ApiResponse<{ cart: Cart } | Cart>>(
+      `${this.baseUrl}/cart/remove/${productId}`,
+    );
   }
 
   // --- WISHLIST ---
   getMyWishlist(): Observable<ApiResponse<{ wishlist: Wishlist } | Wishlist>> {
-    return this.http.get<ApiResponse<{ wishlist: Wishlist } | Wishlist>>(`${this.baseUrl}/wishlist`);
+    return this.http.get<ApiResponse<{ wishlist: Wishlist } | Wishlist>>(
+      `${this.baseUrl}/wishlist`,
+    );
   }
 
   toggleWishlist(productId: string): Observable<ApiResponse<{ wishlist: Wishlist } | Wishlist>> {
-    return this.http.patch<ApiResponse<{ wishlist: Wishlist } | Wishlist>>(`${this.baseUrl}/wishlist`, {
-      id: productId,
-    });
+    return this.http.patch<ApiResponse<{ wishlist: Wishlist } | Wishlist>>(
+      `${this.baseUrl}/wishlist`,
+      {
+        id: productId,
+      },
+    );
   }
 
   // --- COUPONS ---
@@ -188,14 +210,22 @@ export class ApiService {
   }
 
   validateCoupon(code: string): Observable<ApiResponse<{ coupon: Coupon } | Coupon>> {
-    return this.http.get<ApiResponse<{ coupon: Coupon } | Coupon>>(`${this.baseUrl}/coupon/validate/${code}`);
+    return this.http.get<ApiResponse<{ coupon: Coupon } | Coupon>>(
+      `${this.baseUrl}/coupon/validate/${code}`,
+    );
   }
 
   checkCoupon(code: string): Observable<ApiResponse<{ coupon: Coupon; isUsed: boolean } | Coupon>> {
-    return this.http.get<ApiResponse<{ coupon: Coupon; isUsed: boolean } | Coupon>>(`${this.baseUrl}/coupon/check/${code}`);
+    return this.http.get<ApiResponse<{ coupon: Coupon; isUsed: boolean } | Coupon>>(
+      `${this.baseUrl}/coupon/check/${code}`,
+    );
   }
 
-  createCoupon(data: { amount: number; startDate: string; endDate: string }): Observable<ApiResponse> {
+  createCoupon(data: {
+    amount: number;
+    startDate: string;
+    endDate: string;
+  }): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`${this.baseUrl}/coupon`, {
       amount: Number(data.amount),
       startDate: new Date(data.startDate).toISOString(),
@@ -232,7 +262,10 @@ export class ApiService {
   }
 
   payOrder(orderId: string): Observable<ApiResponse<{ paymentUrl?: string; token?: string }>> {
-    return this.http.post<ApiResponse<{ paymentUrl?: string; token?: string }>>(`${this.baseUrl}/order/pay/${orderId}`, {});
+    return this.http.post<ApiResponse<{ paymentUrl?: string; token?: string }>>(
+      `${this.baseUrl}/order/pay/${orderId}`,
+      {},
+    );
   }
 
   refundOrder(id: string): Observable<ApiResponse> {
@@ -257,15 +290,27 @@ export class ApiService {
 
   // --- REVIEWS ---
   getProductReviews(productId: string): Observable<ApiResponse<{ reviews: Review[] } | Review[]>> {
-    return this.http.get<ApiResponse<{ reviews: Review[] } | Review[]>>(`${this.baseUrl}/review/product/${productId}`);
+    return this.http.get<ApiResponse<{ reviews: Review[] } | Review[]>>(
+      `${this.baseUrl}/review/product/${productId}`,
+    );
   }
 
-  createReview(data: { product: string; rate: number; comment?: string }): Observable<ApiResponse<{ review: Review } | Review>> {
+  createReview(data: {
+    product: string;
+    rate: number;
+    comment?: string;
+  }): Observable<ApiResponse<{ review: Review } | Review>> {
     return this.http.post<ApiResponse<{ review: Review } | Review>>(`${this.baseUrl}/review`, data);
   }
 
-  updateReview(id: string, data: { rate?: number; comment?: string }): Observable<ApiResponse<{ review: Review } | Review>> {
-    return this.http.patch<ApiResponse<{ review: Review } | Review>>(`${this.baseUrl}/review/${id}`, data);
+  updateReview(
+    id: string,
+    data: { rate?: number; comment?: string },
+  ): Observable<ApiResponse<{ review: Review } | Review>> {
+    return this.http.patch<ApiResponse<{ review: Review } | Review>>(
+      `${this.baseUrl}/review/${id}`,
+      data,
+    );
   }
 
   deleteReview(id: string, method: 'soft' | 'hard' = 'soft'): Observable<ApiResponse> {

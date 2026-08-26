@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, of } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface ChatMessage {
   id: string;
@@ -21,8 +22,7 @@ export interface WebhookResponse {
 })
 export class ChatbotService {
   private http = inject(HttpClient);
-  private webhookUrl =
-    'https://clang-ammonium-unlit.ngrok-free.dev/webhook/328ed351-e94b-4b51-b5c5-80fed5fb378e';
+  private webhookUrl = environment.n8nWebhookUrl;
 
   sendMessage(message: string): Observable<string> {
     const payload = {
