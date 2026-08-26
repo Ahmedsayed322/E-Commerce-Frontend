@@ -7,5 +7,8 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './footer.component.html',
+  host: {
+    class: 'block w-full',
+  },
 })
 export class FooterComponent {}

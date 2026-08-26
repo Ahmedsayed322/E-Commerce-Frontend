@@ -2,8 +2,8 @@
   <!-- Top Navigation Header -->
   <app-navbar />
 
-  <!-- Main View Route Outlet -->
-  <main class="flex-1">
+  <!-- Main View Route Outlet with Reserved Viewport Space to Eliminate Footer CLS -->
+  <main class="flex-1 w-full min-h-[85vh] block">
     <router-outlet />
   </main>
 
