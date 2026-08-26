@@ -33,11 +33,11 @@
           />
         </div>
 
-        <h3 class="font-luxury text-2xl sm:text-3xl tracking-tight text-white font-bold">
-          {{ authStore.authModalMode() === 'signin' ? 'Welcome Back' : 'Create an Account' }}
+        <h3 class="font-luxury text-2xl tracking-tight text-white font-bold">
+          {{ authStore.authModalMode() === 'signin' ? 'Sign In to Your Account' : 'Create an OWEL Account' }}
         </h3>
         <p class="text-xs text-[#D8D2C7]/80 mt-1 font-secondary max-w-xs mx-auto">
-          {{ authStore.authModalMode() === 'signin' ? 'Access your orders, bespoke bag, and privilege offers.' : 'Join OWEL to unlock personalized curation and fast checkout.' }}
+          {{ authStore.authModalMode() === 'signin' ? 'Access your orders, saved items, and checkout history.' : 'Create an account for faster checkout and order tracking.' }}
         </p>
 
         <!-- Top Switch Tabs -->

@@ -25,13 +25,13 @@ export class SeoService {
   private platformId = inject(PLATFORM_ID);
   private isBrowser = isPlatformBrowser(this.platformId);
 
-  private readonly siteName = 'OWEL — Luxury Living & Electronics';
-  private readonly defaultTitle = 'OWEL — Luxury Curated Electronics & Lifestyle';
+  private readonly siteName = 'OWEL — Electronics & Daily Hardware';
+  private readonly defaultTitle = 'OWEL — Consumer Electronics, Audio & Daily Hardware';
   private readonly defaultDescription =
-    'Discover OWEL: Exclusive luxury acoustics, precision timepieces, and flagship electronics from the world’s most prestigious design houses with complimentary express delivery.';
+    'OWEL supplies authentic smartphones, high-end acoustics, computers, and everyday hardware across Egypt with official distributor warranty and fast shipping.';
   private readonly defaultImage = 'https://owel-gamma.vercel.app/logo.png';
   private readonly defaultKeywords =
-    'luxury electronics, audiophile acoustics, designer timepieces, high-end audio, premium tech, OWEL digital boutique';
+    'consumer electronics, smartphones, headphones, audio gear, laptops, OWEL store Egypt';
 
   init() {
     this.router.events

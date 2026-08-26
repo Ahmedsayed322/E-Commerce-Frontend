@@ -6,8 +6,8 @@
       <span>/</span>
       <span class="text-[#111111] font-semibold">Catalog</span>
     </div>
-    <h1 class="font-luxury text-3xl sm:text-4xl text-[#111111] tracking-tight font-bold">Shop Curated Luxury Electronics & High-End Tech</h1>
-    <p class="text-xs sm:text-sm text-[#777777] mt-1 font-secondary">Explore flagship smartphones, master-tuned acoustics, smartwatches, and designer electronics with express delivery.</p>
+    <h1 class="font-luxury text-3xl sm:text-4xl text-[#111111] tracking-tight font-bold">Hardware, Audio & Everyday Devices</h1>
+    <p class="text-xs sm:text-sm text-[#777777] mt-1 font-secondary">Explore smartphones, audio equipment, laptops, and daily tools with fast express delivery in Egypt.</p>
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -20,7 +20,7 @@
           <button
             type="button"
             (click)="productsStore.resetFilters()"
-            class="text-xs text-[#C96F4A] hover:underline font-bold"
+            class="text-xs text-[#C96F4A] hover:underline font-bold cursor-pointer"
           >
             Reset All
           </button>
@@ -35,7 +35,7 @@
             type="text"
             [ngModel]="productsStore.searchQuery()"
             (ngModelChange)="productsStore.setSearch($event)"
-            placeholder="Search by title..."
+            placeholder="Search by title or model..."
             class="w-full px-3.5 py-2 text-xs rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40 text-[#111111] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#C96F4A]/20 focus:border-[#C96F4A]"
           />
         </div>
@@ -49,7 +49,7 @@
             type="button"
             (click)="productsStore.setCategory(null)"
             [class]="!productsStore.selectedCategory() ? 'bg-[#111111] text-white font-bold' : 'text-[#111111] hover:bg-[#F7F4EE]'"
-            class="w-full text-left px-3 py-2 text-xs rounded-xl transition flex items-center justify-between"
+            class="w-full text-left px-3 py-2 text-xs rounded-xl transition flex items-center justify-between cursor-pointer"
           >
             <span>All Categories</span>
             <span class="text-[10px]" [class]="!productsStore.selectedCategory() ? 'text-[#D8D2C7]' : 'text-[#888888]'">
@@ -62,7 +62,7 @@
               type="button"
               (click)="productsStore.setCategory(cat._id)"
               [class]="productsStore.selectedCategory() === cat._id ? 'bg-[#111111] text-white font-bold' : 'text-[#111111] hover:bg-[#F7F4EE]'"
-              class="w-full text-left px-3 py-2 text-xs rounded-xl transition flex items-center justify-between"
+              class="w-full text-left px-3 py-2 text-xs rounded-xl transition flex items-center justify-between cursor-pointer"
             >
               <span class="truncate pr-2">{{ cat.name }}</span>
             </button>
@@ -78,7 +78,7 @@
             type="button"
             (click)="productsStore.setBrand(null)"
             [class]="!productsStore.selectedBrand() ? 'bg-[#111111] text-white font-bold' : 'text-[#111111] hover:bg-[#F7F4EE]'"
-            class="w-full text-left px-3 py-2 text-xs rounded-xl transition"
+            class="w-full text-left px-3 py-2 text-xs rounded-xl transition cursor-pointer"
           >
             All Brands
           </button>
@@ -88,7 +88,7 @@
               type="button"
               (click)="productsStore.setBrand(brand._id)"
               [class]="productsStore.selectedBrand() === brand._id ? 'bg-[#111111] text-white font-bold' : 'text-[#111111] hover:bg-[#F7F4EE]'"
-              class="w-full text-left px-3 py-2 text-xs rounded-xl transition flex items-center gap-2"
+              class="w-full text-left px-3 py-2 text-xs rounded-xl transition flex items-center gap-2 cursor-pointer"
             >
               <span class="w-1.5 h-1.5 rounded-full" [class]="productsStore.selectedBrand() === brand._id ? 'bg-[#C96F4A]' : 'bg-[#D8D2C7]'"></span>
               <span class="truncate">{{ brand.name }}</span>
@@ -103,7 +103,7 @@
       <!-- Top Sort & Summary Bar -->
       <div class="bg-white p-4 rounded-2xl border border-[#D8D2C7]/60 shadow-soft flex flex-col sm:flex-row items-center justify-between gap-4">
         <p class="text-xs text-[#777777]">
-          Showing <strong class="text-[#111111]">{{ productsStore.paginatedProducts().length }}</strong> of <strong class="text-[#111111]">{{ productsStore.filteredProducts().length }}</strong> pieces
+          Showing <strong class="text-[#111111]">{{ productsStore.paginatedProducts().length }}</strong> of <strong class="text-[#111111]">{{ productsStore.filteredProducts().length }}</strong> products
           (Page {{ productsStore.currentPage() }} of {{ productsStore.totalPages() }})
         </p>
 
@@ -113,9 +113,9 @@
           <select
             [ngModel]="productsStore.sortBy()"
             (ngModelChange)="productsStore.setSort($event)"
-            class="px-3 py-1.5 text-xs rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40 text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#C96F4A]/20 font-semibold"
+            class="px-3 py-1.5 text-xs rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40 text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#C96F4A]/20 font-semibold cursor-pointer"
           >
-            <option value="featured">Featured Picks</option>
+            <option value="featured">Featured</option>
             <option value="price-asc">Price: Low to High</option>
             <option value="price-desc">Price: High to Low</option>
             <option value="rating">Highest Rated</option>
@@ -124,7 +124,7 @@
         </div>
       </div>
 
-      <!-- Luxury Skeleton Shimmer Loading (6 cards) -->
+      <!-- Skeleton Loading (6 cards) -->
       @if (productsStore.loading()) {
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
           @for (i of [1,2,3,4,5,6]; track i) {
@@ -158,7 +158,7 @@
           <button
             type="button"
             (click)="productsStore.resetFilters()"
-            class="px-6 py-2.5 rounded-xl bg-[#111111] hover:bg-[#C96F4A] active:scale-95 text-white text-xs font-bold shadow-md transition"
+            class="px-6 py-2.5 rounded-xl bg-[#111111] hover:bg-[#C96F4A] active:scale-95 text-white text-xs font-bold shadow-md transition cursor-pointer"
           >
             Reset All Filters
           </button>
@@ -170,7 +170,7 @@
           }
         </div>
 
-        <!-- Pagination Controls (6 items per page) -->
+        <!-- Pagination Controls -->
         @if (productsStore.totalPages() > 1) {
           <div class="pt-8 pb-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#D8D2C7]/60">
             <p class="text-xs text-[#777777] font-secondary">
@@ -183,7 +183,7 @@
                 type="button"
                 (click)="productsStore.prevPage()"
                 [disabled]="productsStore.currentPage() === 1"
-                class="px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-white text-[#111111] hover:bg-[#F7F4EE] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold transition active:scale-95 flex items-center gap-1"
+                class="px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-white text-[#111111] hover:bg-[#F7F4EE] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold transition active:scale-95 flex items-center gap-1 cursor-pointer"
                 title="Previous Page"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -198,7 +198,7 @@
                   type="button"
                   (click)="productsStore.setPage(pageNum)"
                   [class]="productsStore.currentPage() === pageNum ? 'bg-[#111111] text-white border-[#111111] shadow-sm font-extrabold scale-105' : 'bg-white text-[#111111] border-[#D8D2C7] hover:bg-[#F7F4EE] hover:border-[#C96F4A] font-bold'"
-                  class="w-9 h-9 rounded-xl border text-xs transition active:scale-90 flex items-center justify-center"
+                  class="w-9 h-9 rounded-xl border text-xs transition active:scale-90 flex items-center justify-center cursor-pointer"
                 >
                   {{ pageNum }}
                 </button>
@@ -209,7 +209,7 @@
                 type="button"
                 (click)="productsStore.nextPage()"
                 [disabled]="productsStore.currentPage() === productsStore.totalPages()"
-                class="px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-white text-[#111111] hover:bg-[#F7F4EE] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold transition active:scale-95 flex items-center gap-1"
+                class="px-3.5 py-2 rounded-xl border border-[#D8D2C7] bg-white text-[#111111] hover:bg-[#F7F4EE] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold transition active:scale-95 flex items-center gap-1 cursor-pointer"
                 title="Next Page"
               >
                 <span>Next</span>

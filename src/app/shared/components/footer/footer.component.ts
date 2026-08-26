@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthStore } from '../../../core/stores/auth.store';
 
 @Component({
   selector: 'app-footer',
@@ -11,4 +12,6 @@ import { RouterModule } from '@angular/router';
     class: 'block w-full',
   },
 })
-export class FooterComponent {}
+export class FooterComponent {
+  authStore = inject(AuthStore);
+}

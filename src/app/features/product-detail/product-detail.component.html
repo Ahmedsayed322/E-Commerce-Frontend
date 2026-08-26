@@ -1,67 +1,56 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 animate-fade-in">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in space-y-12">
   <!-- Breadcrumb Navigation -->
-  <nav class="flex items-center gap-2 text-xs text-[#888888] font-secondary">
+  <div class="flex items-center gap-2 text-xs text-[#888888] font-secondary">
     <a routerLink="/" class="hover:text-[#111111]">Home</a>
     <span>/</span>
     <a routerLink="/shop" class="hover:text-[#111111]">Catalog</a>
     <span>/</span>
-    <span class="text-[#111111] font-semibold truncate">{{ productsStore.activeProduct()?.title || 'Product Details' }}</span>
-  </nav>
+    <span class="text-[#111111] font-semibold truncate max-w-xs sm:max-w-md">
+      {{ productsStore.activeProduct()?.title || 'Product' }}
+    </span>
+  </div>
 
-  @if (productsStore.productLoading()) {
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 bg-white p-6 sm:p-10 rounded-3xl border border-[#D8D2C7]/60 shadow-soft">
+  <!-- Product Details Card -->
+  @if (productsStore.loading() && !productsStore.activeProduct()) {
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white rounded-3xl p-8 border border-[#D8D2C7]/60 shadow-soft">
+      <div class="aspect-square w-full rounded-2xl skeleton-shimmer"></div>
       <div class="space-y-4">
-        <div class="aspect-square w-full rounded-2xl skeleton-shimmer"></div>
-        <div class="flex gap-3">
-          <div class="w-20 h-20 rounded-xl skeleton-shimmer"></div>
-          <div class="w-20 h-20 rounded-xl skeleton-shimmer"></div>
-          <div class="w-20 h-20 rounded-xl skeleton-shimmer"></div>
-        </div>
-      </div>
-      <div class="space-y-6 flex flex-col justify-between py-2">
-        <div class="space-y-4">
-          <div class="flex justify-between">
-            <div class="h-6 w-32 rounded-full skeleton-shimmer"></div>
-            <div class="h-6 w-24 rounded-full skeleton-shimmer"></div>
-          </div>
-          <div class="h-10 w-4/5 rounded-xl skeleton-shimmer"></div>
-          <div class="h-16 w-full rounded-2xl skeleton-shimmer"></div>
-          <div class="h-28 w-full rounded-2xl skeleton-shimmer"></div>
-        </div>
-        <div class="space-y-4 pt-6 border-t border-[#D8D2C7]/40">
-          <div class="h-12 w-full rounded-xl skeleton-shimmer"></div>
-        </div>
+        <div class="h-4 w-1/4 rounded-md skeleton-shimmer"></div>
+        <div class="h-8 w-3/4 rounded-md skeleton-shimmer"></div>
+        <div class="h-6 w-1/3 rounded-md skeleton-shimmer"></div>
+        <div class="h-24 w-full rounded-md skeleton-shimmer"></div>
       </div>
     </div>
   } @else if (productsStore.activeProduct(); as product) {
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 bg-white p-6 sm:p-10 rounded-3xl border border-[#D8D2C7]/60 shadow-soft animate-scale-in">
-      <!-- Left: Gallery -->
-      <div class="space-y-4">
-        <!-- Active Image View -->
-        <div class="relative aspect-square w-full rounded-2xl overflow-hidden bg-[#F7F4EE] border border-[#D8D2C7]/40 shadow-inner">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 bg-white rounded-3xl p-6 sm:p-10 border border-[#D8D2C7]/60 shadow-soft">
+      <!-- Left: Image Gallery (5 cols) -->
+      <div class="lg:col-span-5 space-y-4">
+        <!-- Main Product Image Frame -->
+        <div class="relative aspect-square w-full rounded-2xl overflow-hidden bg-[#F7F4EE] border border-[#D8D2C7]/60 flex items-center justify-center shadow-soft">
           <img
             [src]="(activeImage() || product.mainImage) | imageUrl"
             [alt]="product.title"
-            class="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-700 ease-out"
+            class="w-full h-full object-cover object-center transition-transform duration-700 ease-out hover:scale-105"
           />
+
           @if (product.discount > 0) {
-            <div class="absolute top-4 left-4 bg-[#C96F4A] text-white text-xs font-bold px-3.5 py-1 rounded-full shadow-md animate-fade-in">
-              -{{ product.discount }}% SPECIAL OFFER
+            <div class="absolute top-4 left-4 bg-[#C96F4A] text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+              -{{ product.discount }}% OFF
             </div>
           }
         </div>
 
         <!-- Image Thumbnails Strip -->
         @if (product.images && product.images.length > 0) {
-          <div class="flex items-center gap-3 overflow-x-auto pb-2">
+          <div class="flex items-center gap-3 overflow-x-auto py-2">
             <!-- Main Image Thumbnail -->
             <button
               type="button"
               (click)="activeImage.set(product.mainImage)"
               [class.ring-2]="(activeImage() || product.mainImage) === product.mainImage"
-              class="w-20 h-20 rounded-xl overflow-hidden border border-[#D8D2C7] shrink-0 ring-[#C96F4A] transition transform active:scale-95"
+              class="w-20 h-20 rounded-xl overflow-hidden border border-[#D8D2C7] shrink-0 ring-[#C96F4A] transition cursor-pointer bg-[#F7F4EE] shadow-sm hover:opacity-90"
             >
-              <img [src]="product.mainImage | imageUrl" class="w-full h-full object-cover" />
+              <img [src]="product.mainImage | imageUrl" class="w-full h-full object-cover object-center" />
             </button>
 
             <!-- Sub Images Thumbnails -->
@@ -70,20 +59,26 @@
                 type="button"
                 (click)="activeImage.set(img)"
                 [class.ring-2]="activeImage() === img"
-                class="w-20 h-20 rounded-xl overflow-hidden border border-[#D8D2C7] shrink-0 ring-[#C96F4A] transition transform active:scale-95"
+                class="w-20 h-20 rounded-xl overflow-hidden border border-[#D8D2C7] shrink-0 ring-[#C96F4A] transition cursor-pointer bg-[#F7F4EE] shadow-sm hover:opacity-90"
               >
-                <img [src]="img | imageUrl" class="w-full h-full object-cover" />
+                <img [src]="img | imageUrl" class="w-full h-full object-cover object-center" />
               </button>
             }
           </div>
         }
       </div>
 
-      <!-- Right: Product Info & Actions -->
-      <div class="flex flex-col justify-between">
+      <!-- Right: Product Info & Actions (7 cols) -->
+      <div class="lg:col-span-7 flex flex-col justify-between space-y-6">
         <div>
-          <!-- Stock & Rating Tags -->
+          <!-- Brand & Stock Tag -->
           <div class="flex items-center justify-between gap-4 mb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-[#C96F4A]">
+                {{ getBrandName(product) }}
+              </span>
+            </div>
+
             <div class="flex items-center gap-2">
               @if (product.stock > 0) {
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
@@ -96,22 +91,23 @@
                 </span>
               }
             </div>
-
-            @if (product.ratingAverage) {
-              <div class="flex items-center gap-1.5 text-amber-500 font-bold text-xs bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
-                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-                <span>{{ product.ratingAverage }}</span>
-                <span class="text-[#888888] font-normal">({{ product.ratingCount || 0 }} reviews)</span>
-              </div>
-            }
           </div>
 
           <!-- Title -->
-          <h1 class="font-luxury text-2xl sm:text-3xl lg:text-4xl text-[#111111] tracking-tight leading-snug mb-4">
+          <h1 class="font-luxury text-2xl sm:text-3xl lg:text-4xl text-[#111111] tracking-tight leading-snug mb-4 font-bold">
             {{ product.title }}
           </h1>
+
+          <!-- Rating Summary Tag -->
+          @if (product.ratingAverage) {
+            <div class="flex items-center gap-1.5 text-amber-500 font-bold text-xs bg-amber-50 px-3 py-1 rounded-full border border-amber-200 inline-flex mb-4">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              <span>{{ product.ratingAverage }}</span>
+              <span class="text-[#888888] font-normal">({{ product.ratingCount || 0 }} reviews)</span>
+            </div>
+          }
 
           <!-- Price Box -->
           <div class="p-4 rounded-2xl bg-[#F7F4EE] border border-[#D8D2C7]/60 flex items-baseline gap-3 mb-6">
@@ -132,7 +128,7 @@
           <div class="space-y-2 mb-8 font-secondary">
             <h4 class="text-xs font-bold text-[#111111] uppercase tracking-wider">Product Overview</h4>
             <p class="text-xs sm:text-sm text-[#555555] leading-relaxed">
-              {{ product.description || 'Exquisite materials and master engineering harmoniously aligned. Designed to offer peerless performance, uncompromised longevity, and sophisticated aesthetics.' }}
+              {{ product.description || 'Genuine equipment tested for performance, durability, and practical utility. Backed by official local distributor warranty.' }}
             </p>
           </div>
         </div>
@@ -147,7 +143,7 @@
                 <button
                   type="button"
                   (click)="decreaseQty()"
-                  class="px-3.5 py-2 text-[#111111] hover:bg-[#D8D2C7]/60 transition font-bold active:scale-90"
+                  class="px-3.5 py-2 text-[#111111] hover:bg-[#D8D2C7]/60 transition font-bold active:scale-90 cursor-pointer"
                 >
                   -
                 </button>
@@ -155,7 +151,7 @@
                 <button
                   type="button"
                   (click)="increaseQty(product.stock)"
-                  class="px-3.5 py-2 text-[#111111] hover:bg-[#D8D2C7]/60 transition font-bold active:scale-90"
+                  class="px-3.5 py-2 text-[#111111] hover:bg-[#D8D2C7]/60 transition font-bold active:scale-90 cursor-pointer"
                 >
                   +
                 </button>
@@ -180,7 +176,7 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
-                <span>Add to Shopping Bag</span>
+                <span>Add to Bag</span>
               } @else {
                 <span>Sold Out</span>
               }
@@ -193,7 +189,7 @@
               class="w-full py-4 px-6 rounded-xl transition flex items-center justify-center gap-2 font-bold text-xs shadow-md"
               [ngClass]="product.stock <= 0 ? 'bg-[#D8D2C7]/40 text-[#888888] cursor-not-allowed opacity-50' : 'bg-[#111111] hover:bg-[#222222] active:scale-95 text-white cursor-pointer transform hover:-translate-y-0.5'"
             >
-              {{ product.stock > 0 ? 'Instant Checkout' : 'Unavailable' }}
+              {{ product.stock > 0 ? 'Buy Now' : 'Unavailable' }}
             </button>
           </div>
 
@@ -201,7 +197,7 @@
           <button
             type="button"
             (click)="wishlistStore.toggle(product)"
-            class="w-full py-3 px-4 rounded-xl border border-[#D8D2C7] hover:border-[#111111] active:scale-98 text-[#111111] text-xs font-bold flex items-center justify-center gap-2 transition"
+            class="w-full py-3 px-4 rounded-xl border border-[#D8D2C7] hover:border-[#111111] active:scale-98 text-[#111111] text-xs font-bold flex items-center justify-center gap-2 transition cursor-pointer"
           >
             <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -213,13 +209,13 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- REVIEWS & CLIENT RATINGS SECTION          -->
+    <!-- CUSTOMER REVIEWS & RATINGS SECTION        -->
     <!-- ========================================== -->
     <section class="space-y-8 pt-8 border-t border-[#D8D2C7]/60">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <span class="text-xs font-bold text-[#C96F4A] uppercase tracking-widest">Patron Impressions</span>
-          <h3 class="font-luxury text-2xl sm:text-3xl text-[#111111] tracking-tight mt-1">Client Reviews & Ratings</h3>
+          <span class="text-xs font-bold text-[#C96F4A] uppercase tracking-widest">Feedback</span>
+          <h3 class="font-luxury text-2xl sm:text-3xl text-[#111111] tracking-tight mt-1 font-bold">Customer Reviews & Ratings</h3>
         </div>
 
         <!-- Rating Summary Pill -->
@@ -252,7 +248,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <!-- Left: Write a Review Form -->
         <div class="bg-white p-6 rounded-3xl border border-[#D8D2C7]/60 shadow-soft space-y-4">
-          <h4 class="font-bold text-sm text-[#111111] uppercase tracking-wider">Share Your Experience</h4>
+          <h4 class="font-bold text-sm text-[#111111] uppercase tracking-wider">Write a Review</h4>
 
           @if (!authStore.isAuthenticated()) {
             <div class="p-4 rounded-2xl bg-[#F7F4EE] text-center space-y-3">
@@ -260,7 +256,7 @@
               <button
                 type="button"
                 (click)="authStore.openAuthModal('signin')"
-                class="px-5 py-2 rounded-xl bg-[#111111] hover:bg-[#C96F4A] text-white font-bold text-xs shadow-sm transition active:scale-95"
+                class="px-5 py-2 rounded-xl bg-[#111111] hover:bg-[#C96F4A] text-white font-bold text-xs shadow-sm transition active:scale-95 cursor-pointer"
               >
                 Sign In to Review
               </button>
@@ -273,7 +269,7 @@
                 </svg>
                 <span>Review Submitted</span>
               </div>
-              <p class="text-xs text-emerald-800 font-secondary">Thank you for sharing your perspective on this creation.</p>
+              <p class="text-xs text-emerald-800 font-secondary">Thank you for sharing your feedback.</p>
             </div>
           } @else {
             <form (ngSubmit)="submitReview()" class="space-y-4">
@@ -285,7 +281,7 @@
                     <button
                       type="button"
                       (click)="setRating(star)"
-                      class="p-1 rounded-lg hover:scale-125 transition duration-150"
+                      class="p-1 rounded-lg hover:scale-125 transition duration-150 cursor-pointer"
                       [title]="star + ' stars'"
                     >
                       <svg
@@ -310,7 +306,7 @@
                   [(ngModel)]="newComment"
                   name="comment"
                   rows="3"
-                  placeholder="Share details regarding build quality, design, and performance..."
+                  placeholder="Share details regarding build quality, battery life, or sound performance..."
                   class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-[#D8D2C7] bg-[#F7F4EE]/40 text-[#111111] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#C96F4A]/20 font-secondary"
                 ></textarea>
               </div>
@@ -318,16 +314,16 @@
               <!-- Submit Button -->
               <button
                 type="submit"
-                [disabled]="reviewStore.submitting()"
-                class="w-full py-3 rounded-xl bg-[#111111] hover:bg-[#C96F4A] active:scale-95 text-white font-bold text-xs shadow-md transition disabled:opacity-50"
+                [disabled]="reviewStore.submitting() || newRating() === 0"
+                class="w-full py-3 rounded-xl bg-[#111111] hover:bg-[#C96F4A] text-white font-bold text-xs shadow-md transition duration-200 active:scale-95 disabled:opacity-50 cursor-pointer"
               >
-                {{ reviewStore.submitting() ? 'Submitting...' : 'Publish Review' }}
+                {{ reviewStore.submitting() ? 'Submitting Review...' : 'Post Review' }}
               </button>
             </form>
           }
         </div>
 
-        <!-- Right: Reviews List -->
+        <!-- Right: Reviews List (2 cols) -->
         <div class="lg:col-span-2 space-y-4">
           @if (reviewStore.loading()) {
             <div class="space-y-4">
@@ -353,7 +349,7 @@
               </div>
               <h4 class="font-bold text-sm text-[#111111]">No Reviews Yet</h4>
               <p class="text-xs text-[#777777] font-secondary max-w-sm mx-auto">
-                Be the premier connoisseur to share an impression regarding this curated piece.
+                Be the first to share a review regarding this product.
               </p>
             </div>
           } @else {
@@ -391,7 +387,7 @@
                         <button
                           type="button"
                           (click)="deleteReview(rev._id)"
-                          class="p-1 rounded-md text-[#888888] hover:text-rose-600 hover:bg-rose-50 transition"
+                          class="p-1 rounded-md text-[#888888] hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
                           title="Delete review"
                         >
                           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -415,11 +411,13 @@
       </div>
     </section>
 
-    <!-- Related Recommendations -->
+    <!-- Related Products -->
     <section class="space-y-6 pt-6">
-      <h3 class="font-luxury text-2xl text-[#111111] tracking-tight">You May Also Admire</h3>
+      <div class="border-b border-[#D8D2C7]/60 pb-3">
+        <h3 class="font-luxury text-2xl text-[#111111] tracking-tight font-bold">Related Products</h3>
+      </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch animate-fade-in-up">
-        @for (rel of productsStore.featuredProducts().slice(0, 4); track rel._id) {
+        @for (rel of productsStore.products().slice(0, 4); track rel._id) {
           <app-product-card [product]="rel" />
         }
       </div>

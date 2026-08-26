@@ -1,15 +1,15 @@
-import { Component, effect, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, effect, inject, signal, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import { map, filter } from 'rxjs';
+import { map, filter, tap } from 'rxjs';
 import { ProductsStore } from '../../core/stores/products.store';
 import { CartStore } from '../../core/stores/cart.store';
 import { WishlistStore } from '../../core/stores/wishlist.store';
 import { AuthStore } from '../../core/stores/auth.store';
 import { ReviewStore } from '../../core/stores/review.store';
 import { ToastService } from '../../core/services/toast.service';
-import { Review } from '../../core/models';
+import { Review, Product } from '../../core/models';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { ImageUrlPipe } from '../../core/pipes/image-url.pipe';
 import { SeoService } from '../../core/services/seo.service';
@@ -30,6 +30,8 @@ export class ProductDetailComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private seoService = inject(SeoService);
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId);
 
   activeImage = signal<string | null>(null);
   quantity = signal(1);
@@ -39,6 +41,15 @@ export class ProductDetailComponent {
   readonly productId$ = this.route.paramMap.pipe(
     map((params) => params.get('id')),
     filter((id): id is string => Boolean(id)),
+    tap(() => {
+      this.activeImage.set(null);
+      this.quantity.set(1);
+      this.newRating.set(0);
+      this.newComment.set('');
+      if (this.isBrowser && typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      }
+    }),
   );
 
   constructor() {
@@ -122,6 +133,13 @@ export class ProductDetailComponent {
       if (u.email) return u.email.split('@')[0];
     }
     return 'Verified Patron';
+  }
+
+  getBrandName(product: Product): string {
+    if (typeof product.brand === 'object' && product.brand !== null) {
+      return (product.brand as any).name || 'OWEL';
+    }
+    return 'OWEL';
   }
 
   canDeleteReview(review: Review): boolean {
