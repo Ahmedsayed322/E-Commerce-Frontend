@@ -40,7 +40,10 @@
                 "127.0.0.1:4000",
                 "127.0.0.1:4200",
                 "*.ngrok-free.dev",
-                "clang-ammonium-unlit.ngrok-free.dev"
+                "clang-ammonium-unlit.ngrok-free.dev",
+                "*.vercel.app",
+                "vercel.app",
+                "*.now.sh"
               ]
             }
           },
